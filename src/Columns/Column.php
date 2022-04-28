@@ -30,7 +30,7 @@ abstract class Column extends Component implements ColumnContract
         $this->class = collect();
     }
 
-    abstract public function render():? View;
+    abstract public function render(): ?View;
 
     public function title(?string $title): self
     {
@@ -71,13 +71,13 @@ abstract class Column extends Component implements ColumnContract
 
         $class = is_callable($this->styleCallback) ? call_user_func($this->styleCallback, $row) : null;
 
-        if (!is_string($class) && !is_null($class)) {
+        if (! is_string($class) && ! is_null($class)) {
             throw new RuntimeException('Return value must be a string');
         }
 
         $classes->push($class);
 
-        if ($this->hasHighlight && !is_null($this->getHighlight()) && ($this->getHighlight() === $this->getValue($row))) {
+        if ($this->hasHighlight && ! is_null($this->getHighlight()) && ($this->getHighlight() === $this->getValue($row))) {
             $classes->push('text-green-700 font-semibold');
         }
 
@@ -111,7 +111,7 @@ abstract class Column extends Component implements ColumnContract
         return $this;
     }
 
-    private function getHighlight():? string
+    private function getHighlight(): ?string
     {
         return $this->highlight;
     }
@@ -156,14 +156,14 @@ abstract class Column extends Component implements ColumnContract
         return sprintf('column_%s', $this->getName());
     }
 
-    protected function getValue($row):? string
+    protected function getValue($row): ?string
     {
         return data_get($row->toArray(), $this->getName());
     }
 
     public function renderTitle(): string|View
     {
-        if (is_null($this->currentSort) && !$this->isSortable()) {
+        if (is_null($this->currentSort) && ! $this->isSortable()) {
             return $this->getTitle();
         }
 
@@ -173,11 +173,11 @@ abstract class Column extends Component implements ColumnContract
                 'title' => $this->getTitle(),
                 'isCurrentSort' => str_replace('-', '', $this->currentSort) === $this->getName(),
                 'isSortUp' => $this->currentSort === $this->getName(),
-                'sort' => $this->currentSort
+                'sort' => $this->currentSort,
             ]);
     }
 
-    public function renderIt($row):? string
+    public function renderIt($row): ?string
     {
         $condition = is_callable($this->displayCondition)
             ? call_user_func($this->displayCondition, $row)
@@ -201,7 +201,7 @@ abstract class Column extends Component implements ColumnContract
                 'id' => $row->getKey(),
                 'name' => $this->getName(),
                 'data' => $row->{$this->getName()},
-                'row' => $row
+                'row' => $row,
             ])
             ->render();
     }

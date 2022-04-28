@@ -16,9 +16,9 @@ trait WithActions
             );
     }
 
-    protected function getCheckboxColumn():? Checkbox
+    protected function getCheckboxColumn(): ?Checkbox
     {
-        if (!count($this->actions())) {
+        if (! count($this->actions())) {
             return null;
         }
 

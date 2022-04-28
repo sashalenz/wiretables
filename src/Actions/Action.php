@@ -15,7 +15,9 @@ abstract class Action implements ActionContract
     private ?Collection $class = null;
     private ?Closure $displayCondition = null;
 
-    public function __construct(private readonly string $name) { }
+    public function __construct(private readonly string $name)
+    {
+    }
 
     public function title(string $title): self
     {
@@ -36,7 +38,7 @@ abstract class Action implements ActionContract
         return $this;
     }
 
-    public function getIcon():? string
+    public function getIcon(): ?string
     {
         return $this->icon;
     }
@@ -65,7 +67,7 @@ abstract class Action implements ActionContract
         return $this;
     }
 
-    public function getClass():? string
+    public function getClass(): ?string
     {
         return $this->class
             ->filter()

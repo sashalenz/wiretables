@@ -23,18 +23,18 @@ class DateTime extends Column
         return $this;
     }
 
-    public function renderIt($row):? string
+    public function renderIt($row): ?string
     {
         $date = $row->{$this->getName()};
 
-        if (!$date instanceof Carbon) {
+        if (! $date instanceof Carbon) {
             return $date;
         }
 
         return $date->format($this->format);
     }
 
-    public function render():? View
+    public function render(): ?View
     {
         return null;
     }

@@ -13,7 +13,7 @@ class SearchFilter
         $this->value = $value;
     }
 
-    public function __invoke(Builder $query) : Builder
+    public function __invoke(Builder $query): Builder
     {
         return $query->when($this->value, function (Builder $query) {
             return $query->where(function (Builder $query) {

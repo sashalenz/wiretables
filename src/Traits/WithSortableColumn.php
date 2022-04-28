@@ -12,8 +12,9 @@ trait WithSortableColumn
         }
 
 //        check if model is sortable 'has SortableTrait'
-        if (!method_exists($this->model, 'bootSortableTrait')) {
+        if (! method_exists($this->model, 'bootSortableTrait')) {
             info('model is not sortable');
+
             return;
         }
 
@@ -22,6 +23,7 @@ trait WithSortableColumn
 //        check if current sort is sortable field
         if ($this->getSortProperty() !== $orderColumn) {
             info("please sort by {$orderColumn}");
+
             return;
         }
 
@@ -58,14 +60,13 @@ trait WithSortableColumn
         return app($this->model)->determineOrderColumnName();
     }
 
-
     public function getUseSortProperty(): bool
     {
-        if (!method_exists($this, 'updateRowSort')) {
+        if (! method_exists($this, 'updateRowSort')) {
             return false;
         }
 
-        if (!method_exists($this->model, 'bootSortableTrait')) {
+        if (! method_exists($this->model, 'bootSortableTrait')) {
             return false;
         }
 

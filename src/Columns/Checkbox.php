@@ -13,7 +13,7 @@ class Checkbox extends Column
         return view('wiretables::partials.checkbox-title');
     }
 
-    public function render():? View
+    public function render(): ?View
     {
         return view('wiretables::columns.checkbox');
     }

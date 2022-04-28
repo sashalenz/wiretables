@@ -3,6 +3,7 @@
 namespace Sashalenz\Wiretables\Traits;
 
 use Sashalenz\Wiretables\Columns\Action;
+
 //use Sashalenz\Wiretables\Components\Buttons\DeleteButton;
 //use Sashalenz\Wiretables\Components\Buttons\LinkButton;
 //use Sashalenz\Wiretables\Components\Buttons\ModalButton;
@@ -23,7 +24,7 @@ trait WithButtons
     {
         $this->actionButtons = [];
 
-        if (!isset($this->model)) {
+        if (! isset($this->model)) {
             return;
         }
 
@@ -64,15 +65,14 @@ trait WithButtons
 
             $this->dispatchBrowserEvent('alert', [
                 'status' => 'success',
-                'message' => 'Successfully deleted!'
+                'message' => 'Successfully deleted!',
             ]);
 
             $this->dispatchBrowserEvent('$refresh');
-
         } catch (\RuntimeException $exception) {
             $this->dispatchBrowserEvent('alert', [
                 'status' => 'fail',
-                'message' => 'Unable to delete!'
+                'message' => 'Unable to delete!',
             ]);
         }
     }
@@ -85,24 +85,24 @@ trait WithButtons
 
             $this->dispatchBrowserEvent('alert', [
                 'status' => 'success',
-                'message' => 'Successfully restored!'
+                'message' => 'Successfully restored!',
             ]);
 
             $this->dispatchBrowserEvent('$refresh');
         } catch (\RuntimeException $exception) {
             $this->dispatchBrowserEvent('alert', [
                 'status' => 'fail',
-                'message' => 'Unable to restore!'
+                'message' => 'Unable to restore!',
             ]);
         }
     }
 
-    protected function getActionColumn():? Action
+    protected function getActionColumn(): ?Action
     {
         $this->actionButtons = collect($this->buttons())
             ->merge($this->actionButtons);
 
-        if (!$this->actionButtons->count()) {
+        if (! $this->actionButtons->count()) {
             return null;
         }
 

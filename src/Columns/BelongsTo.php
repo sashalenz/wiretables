@@ -28,7 +28,7 @@ class BelongsTo extends Column
         return view('wiretables::columns.belongs-to')
             ->with([
                 'icon' => $this->icon,
-                'route' => $this->route
+                'route' => $this->route,
             ]);
     }
 }
