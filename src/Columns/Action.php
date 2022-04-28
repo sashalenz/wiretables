@@ -17,10 +17,10 @@ class Action extends Column
         return $this;
     }
 
-    public function render():? View
+    public function render(): ?View
     {
         return view('wiretables::columns.action', [
-            'buttons' => $this->buttons->filter()
+            'buttons' => $this->buttons->filter(),
         ]);
     }
 }

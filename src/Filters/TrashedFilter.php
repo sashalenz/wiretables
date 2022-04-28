@@ -17,10 +17,10 @@ class TrashedFilter extends Filter
             ->options([
                 null => __('wiretables::without_trashed'),
                 'with' => __('wiretables::with_trashed'),
-                'only' => __('wiretables::only_trashed')
+                'only' => __('wiretables::only_trashed'),
             ])
             ->withAttributes([
-                "wire:change" => "addFilter"
+                "wire:change" => "addFilter",
             ])
             ->renderIt();
     }

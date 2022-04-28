@@ -35,15 +35,16 @@ trait WithFiltering
         $this->getRequest()->query->set('filter', $this->filters->toArray());
     }
 
-    private function expandFilters($filters) : Collection
+    private function expandFilters($filters): Collection
     {
         return collect(explode(';', $filters))
             ->mapWithKeys(static function ($filter) {
-                if (!str_contains($filter, ':')) {
+                if (! str_contains($filter, ':')) {
                     return [$filter => true];
                 }
 
                 [$k, $v] = explode(':', $filter);
+
                 return [$k => $v];
             });
     }
@@ -55,9 +56,9 @@ trait WithFiltering
             ->implode(';');
     }
 
-    private function getTrashedFilter():? TrashedFilter
+    private function getTrashedFilter(): ?TrashedFilter
     {
-        if (!method_exists($this->model, 'bootSoftDeletes')) {
+        if (! method_exists($this->model, 'bootSoftDeletes')) {
             return null;
         }
 
@@ -102,7 +103,7 @@ trait WithFiltering
 
         return $this->filters()
             ->when(
-                !is_null($trashedFilter),
+                ! is_null($trashedFilter),
                 fn (Collection $rows) => $rows->push($trashedFilter)
             )
             ->each(
@@ -114,5 +115,4 @@ trait WithFiltering
     {
         return $this->{self::$filterKey};
     }
-
 }

@@ -6,5 +6,5 @@ use Illuminate\Contracts\View\View;
 
 interface ColumnContract
 {
-    public function render():? View;
+    public function render(): ?View;
 }

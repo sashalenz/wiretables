@@ -20,7 +20,7 @@ trait WithSorting
         $this->setSort($this->getDefaultSort());
     }
 
-    private function resolveSort():? string
+    private function resolveSort(): ?string
     {
         return request()->query(self::$sortKey, $this->getDefaultSort());
     }
@@ -34,8 +34,8 @@ trait WithSorting
     private function getAllowedSorts(): array
     {
         return $this->columns()
-                ->filter(fn(Column $column) => $column->isSortable())
-                ->map(fn(Column $column) => $column->getName())
+                ->filter(fn (Column $column) => $column->isSortable())
+                ->map(fn (Column $column) => $column->getName())
                 ->values()
                 ->toArray() ?? [];
     }

@@ -18,12 +18,12 @@ use Spatie\QueryBuilder\QueryBuilderRequest;
 
 abstract class Table extends Component
 {
-    use WithPagination,
-        WithFiltering,
-        WithSorting,
-        WithSearching,
-        WithButtons,
-        WithActions;
+    use WithPagination;
+    use WithFiltering;
+    use WithSorting;
+    use WithSearching;
+    use WithButtons;
+    use WithActions;
 
     protected string $model;
     protected $request;
@@ -31,7 +31,7 @@ abstract class Table extends Component
     protected $listeners = [
         'refresh',
         'resetTable',
-        'addFilter'
+        'addFilter',
     ];
 
     public function refresh(): void
@@ -49,7 +49,7 @@ abstract class Table extends Component
 
     public function getRequest(): QueryBuilderRequest
     {
-        if (!$this->request) {
+        if (! $this->request) {
             $this->request = app(QueryBuilderRequest::class);
         }
 
@@ -63,19 +63,19 @@ abstract class Table extends Component
 
         return $this->columns()
             ->when(
-                method_exists($this,'initializeWithSearching') && !is_null($this->getSearchProperty()),
+                method_exists($this, 'initializeWithSearching') && ! is_null($this->getSearchProperty()),
                 fn (Collection $rows) => $rows->each(fn (Column $column) => $column->setHighlight($this->getSearchProperty()))
             )
             ->when(
-                method_exists($this,'initializeWithSorting') && !is_null($this->getSortProperty()),
+                method_exists($this, 'initializeWithSorting') && ! is_null($this->getSortProperty()),
                 fn (Collection $rows) => $rows->each(fn (Column $column) => $column->setCurrentSort($this->getSortProperty()))
             )
             ->when(
-                method_exists($this,'initializeWithButtons') && !is_null($actionColumn),
+                method_exists($this, 'initializeWithButtons') && ! is_null($actionColumn),
                 fn (Collection $rows) => $rows->push($actionColumn)
             )
             ->when(
-                method_exists($this,'initializeWithActions') && !is_null($checkboxColumn),
+                method_exists($this, 'initializeWithActions') && ! is_null($checkboxColumn),
                 fn (Collection $rows) => $rows->prepend($checkboxColumn)
             );
     }
@@ -96,7 +96,7 @@ abstract class Table extends Component
 
         return $builder
             ->when(
-                method_exists($this, 'initializeWithSearching') && !$this->disableSearch && $this->getSearchProperty(),
+                method_exists($this, 'initializeWithSearching') && ! $this->disableSearch && $this->getSearchProperty(),
                 new SearchFilter($this->getSearchProperty())
             )
             ->when(

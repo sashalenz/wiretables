@@ -8,7 +8,7 @@ class Text extends Column
 {
     protected bool $hasHighlight = true;
 
-    public function render():? View
+    public function render(): ?View
     {
         return null;
     }
