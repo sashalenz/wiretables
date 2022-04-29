@@ -56,7 +56,7 @@ trait WithButtons
     {
         $this->actionButtons = array_merge($this->buttons(), $this->actionButtons);
 
-        if (!count($this->actionButtons)) {
+        if (! count($this->actionButtons)) {
             return null;
         }
 
@@ -79,7 +79,7 @@ trait WithButtons
             ->user()
             ?->can($alias, $model);
 
-        if (!$isAuthorized) {
+        if (! $isAuthorized) {
             return null;
         }
 
@@ -93,14 +93,14 @@ trait WithButtons
             ->filter()
             ->implode('.');
 
-        if (!Route::has($routeName)) {
+        if (! Route::has($routeName)) {
             return null;
         }
 
         if (defined(get_class($model) . '::NESTED')) {
             $parent = $model->{Str::of($model::NESTED)->singular()->toString()};
 
-            if (!$parent) {
+            if (! $parent) {
                 return null;
             }
 

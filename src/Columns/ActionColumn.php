@@ -3,7 +3,6 @@
 namespace Sashalenz\Wiretables\Columns;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Collection;
 
 class ActionColumn extends Column
 {

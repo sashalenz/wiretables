@@ -29,7 +29,7 @@ final class GroupButton extends Button
         return view('wiretables::components.buttons.group-button');
     }
 
-    public function renderIt($row):? View
+    public function renderIt($row): ?View
     {
         if (! $this->canDisplay($row)) {
             return null;

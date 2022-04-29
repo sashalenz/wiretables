@@ -22,7 +22,7 @@ class TrashedFilter extends Filter
             ]
         )
             ->withAttributes([
-                "wire:change" => "addFilter"
+                "wire:change" => "addFilter",
             ])
             ->render();
 //        return SelectField::make($this->name, $this->title)
