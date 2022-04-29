@@ -5,14 +5,7 @@ namespace Sashalenz\Wiretables\Traits;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
-use RuntimeException;
 use Sashalenz\Wiretables\Columns\ActionColumn;
-
-//use Sashalenz\Wiretables\Components\Buttons\DeleteButton;
-//use Sashalenz\Wiretables\Components\Buttons\LinkButton;
-//use Sashalenz\Wiretables\Components\Buttons\ModalButton;
-//use Sashalenz\Wiretables\Components\Buttons\RestoreButton;
-//use Sashalenz\Wiretables\Components\Columns\ActionColumn;
 
 trait WithButtons
 {

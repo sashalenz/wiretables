@@ -1,5 +1,5 @@
 <?php
-// config for Sashalenz/Wiretables
-return [
 
+return [
+    'layout' => 'layouts.app'
 ];

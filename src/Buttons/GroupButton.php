@@ -31,11 +31,11 @@ final class GroupButton extends Button
 
     public function renderIt($row):? View
     {
-        if (!$this->canDisplay($row)) {
+        if (! $this->canDisplay($row)) {
             return null;
         }
 
-        if (!$this->getTitle() && !$this->getIcon()) {
+        if (! $this->getTitle() && ! $this->getIcon()) {
             throw new RuntimeException('Title or Icon must be presented');
         }
 
@@ -45,8 +45,7 @@ final class GroupButton extends Button
                 'class' => $this->getClass($row),
                 'icon' => $this->getIcon(),
                 'title' => $this->getTitle(),
-                'buttons' => $this->buttons
+                'buttons' => $this->buttons,
             ]);
     }
-
 }

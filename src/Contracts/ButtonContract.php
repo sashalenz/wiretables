@@ -4,5 +4,4 @@ namespace Sashalenz\Wiretables\Contracts;
 
 interface ButtonContract
 {
-
 }
