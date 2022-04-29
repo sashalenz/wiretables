@@ -2,7 +2,6 @@
 
 namespace Sashalenz\Wiretables\Traits;
 
-use RuntimeException;
 use Sashalenz\Wiretables\Columns\ActionColumn;
 
 //use Sashalenz\Wiretables\Components\Buttons\DeleteButton;

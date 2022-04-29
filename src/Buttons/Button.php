@@ -57,6 +57,7 @@ abstract class Button extends Component implements ButtonContract
     public function class(...$class): self
     {
         $this->class->push($class);
+
         return $this;
     }
 
@@ -64,7 +65,7 @@ abstract class Button extends Component implements ButtonContract
     {
         $class = is_callable($this->styleCallback) ? call_user_func($this->styleCallback, $row) : null;
 
-        if (!is_string($class) && !is_null($class)) {
+        if (! is_string($class) && ! is_null($class)) {
             throw new RuntimeException('Return value must be a string');
         }
 
@@ -79,12 +80,14 @@ abstract class Button extends Component implements ButtonContract
     public function styleUsing(callable $styleCallback): self
     {
         $this->styleCallback = $styleCallback;
+
         return $this;
     }
 
     public function routeUsing(callable $routeCallback): self
     {
         $this->routeCallback = $routeCallback;
+
         return $this;
     }
 
@@ -96,6 +99,7 @@ abstract class Button extends Component implements ButtonContract
     public function displayIf(callable $displayCondition): self
     {
         $this->displayCondition = $displayCondition;
+
         return $this;
     }
 
@@ -104,7 +108,7 @@ abstract class Button extends Component implements ButtonContract
         return is_callable($this->displayCondition) ? call_user_func($this->displayCondition, $row) : true;
     }
 
-    protected function getRoute($row):? string
+    protected function getRoute($row): ?string
     {
         return is_callable($this->routeCallback) ? call_user_func($this->routeCallback, $row) : null;
     }
@@ -114,13 +118,13 @@ abstract class Button extends Component implements ButtonContract
         return new static($name);
     }
 
-    public function renderIt($row):? View
+    public function renderIt($row): ?View
     {
-        if (!$this->canDisplay($row)) {
+        if (! $this->canDisplay($row)) {
             return null;
         }
 
-        if (!$this->getTitle() && !$this->getIcon()) {
+        if (! $this->getTitle() && ! $this->getIcon()) {
             throw new RuntimeException('Title or Icon must be presented');
         }
 
@@ -130,7 +134,7 @@ abstract class Button extends Component implements ButtonContract
                 'class' => $this->getClass($row),
                 'route' => $this->getRoute($row),
                 'icon' => $this->getIcon(),
-                'title' => $this->getTitle()
+                'title' => $this->getTitle(),
             ]);
     }
 }

@@ -9,6 +9,7 @@ class LinkButton extends Button
     public function target(string $target): self
     {
         $this->target = $target;
+
         return $this;
     }
 
@@ -18,7 +19,7 @@ class LinkButton extends Button
     public function render()
     {
         return view('wiretable::components.buttons.link-button')->with([
-            'target' => $this->target
+            'target' => $this->target,
         ]);
     }
 }
