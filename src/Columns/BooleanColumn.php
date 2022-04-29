@@ -4,10 +4,10 @@ namespace Sashalenz\Wiretables\Columns;
 
 use Illuminate\Contracts\View\View;
 
-class Boolean extends Column
+class BooleanColumn extends Column
 {
     public function render(): View
     {
-        return view('wiretables::columns.boolean');
+        return view('wiretables::columns.boolean-column');
     }
 }

@@ -5,7 +5,7 @@ namespace Sashalenz\Wiretables\Columns;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 
-class Action extends Column
+class ActionColumn extends Column
 {
     private ?int $width = 5;
     private ?Collection $buttons;
@@ -19,7 +19,7 @@ class Action extends Column
 
     public function render(): ?View
     {
-        return view('wiretables::columns.action', [
+        return view('wiretables::columns.action-column', [
             'buttons' => $this->buttons->filter(),
         ]);
     }

@@ -2,7 +2,8 @@
 
 namespace Sashalenz\Wiretables\Traits;
 
-use Sashalenz\Wiretables\Columns\Action;
+use RuntimeException;
+use Sashalenz\Wiretables\Columns\ActionColumn;
 
 //use Sashalenz\Wiretables\Components\Buttons\DeleteButton;
 //use Sashalenz\Wiretables\Components\Buttons\LinkButton;
@@ -52,52 +53,12 @@ trait WithButtons
 //                ->displayIf(fn ($row) => !is_null($row->deleted_at));
 //        }
 
-        if (method_exists($model, 'getRoute') && $model->hasRoute($this->createView)) {
-            $this->createButton = $model->getRoute($this->createView);
-        }
+//        if (method_exists($model, 'getRoute') && $model->hasRoute($this->createView)) {
+//            $this->createButton = $model->getRoute($this->createView);
+//        }
     }
 
-    public function delete($id): void
-    {
-        try {
-            $model = $this->model::findOrFail($id);
-            $model->delete();
-
-            $this->dispatchBrowserEvent('alert', [
-                'status' => 'success',
-                'message' => 'Successfully deleted!',
-            ]);
-
-            $this->dispatchBrowserEvent('$refresh');
-        } catch (\RuntimeException $exception) {
-            $this->dispatchBrowserEvent('alert', [
-                'status' => 'fail',
-                'message' => 'Unable to delete!',
-            ]);
-        }
-    }
-
-    public function restore($id): void
-    {
-        try {
-            $model = $this->model::withTrashed()->findOrFail($id);
-            $model->restore();
-
-            $this->dispatchBrowserEvent('alert', [
-                'status' => 'success',
-                'message' => 'Successfully restored!',
-            ]);
-
-            $this->dispatchBrowserEvent('$refresh');
-        } catch (\RuntimeException $exception) {
-            $this->dispatchBrowserEvent('alert', [
-                'status' => 'fail',
-                'message' => 'Unable to restore!',
-            ]);
-        }
-    }
-
-    protected function getActionColumn(): ?Action
+    protected function getActionColumn(): ?ActionColumn
     {
         $this->actionButtons = collect($this->buttons())
             ->merge($this->actionButtons);
@@ -106,7 +67,7 @@ trait WithButtons
             return null;
         }
 
-        return Action::make('action')->withButtons($this->actionButtons);
+        return ActionColumn::make('action')->withButtons($this->actionButtons);
     }
 
     protected function buttons(): array

@@ -5,7 +5,7 @@ namespace Sashalenz\Wiretables\Columns;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 
-class DateTime extends Column
+class DateTimeColumn extends Column
 {
     public string $format = 'Y-m-d H:i';
 

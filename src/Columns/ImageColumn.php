@@ -4,10 +4,10 @@ namespace Sashalenz\Wiretables\Columns;
 
 use Illuminate\Contracts\View\View;
 
-class Sortable extends Column
+class ImageColumn extends Column
 {
     public function render(): View
     {
-        return view('wiretables::columns.sortable');
+        return view('wiretables::columns.image-column');
     }
 }

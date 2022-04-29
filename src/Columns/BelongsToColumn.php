@@ -4,7 +4,7 @@ namespace Sashalenz\Wiretables\Columns;
 
 use Illuminate\Contracts\View\View;
 
-class BelongsTo extends Column
+class BelongsToColumn extends Column
 {
     private ?string $icon = null;
     private ?string $route = null;
@@ -25,7 +25,7 @@ class BelongsTo extends Column
 
     public function render(): View
     {
-        return view('wiretables::columns.belongs-to')
+        return view('wiretables::columns.belongs-to-column')
             ->with([
                 'icon' => $this->icon,
                 'route' => $this->route,

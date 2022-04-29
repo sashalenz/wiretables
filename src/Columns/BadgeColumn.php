@@ -4,12 +4,10 @@ namespace Sashalenz\Wiretables\Columns;
 
 use Illuminate\Contracts\View\View;
 
-class Text extends Column
+class BadgeColumn extends Column
 {
-    protected bool $hasHighlight = true;
-
     public function render(): ?View
     {
-        return null;
+        return view('wiretables::columns.badge-column');
     }
 }

@@ -3,7 +3,7 @@
 namespace Sashalenz\Wiretables\Traits;
 
 use Illuminate\Support\Collection;
-use Sashalenz\Wiretables\Columns\Checkbox;
+use Sashalenz\Wiretables\Columns\CheckboxColumn;
 use Sashalenz\Wiretables\Contracts\ActionContract;
 
 trait WithActions
@@ -16,13 +16,13 @@ trait WithActions
             );
     }
 
-    protected function getCheckboxColumn(): ?Checkbox
+    protected function getCheckboxColumn(): ?CheckboxColumn
     {
         if (! count($this->actions())) {
             return null;
         }
 
-        return Checkbox::make('checkbox');
+        return CheckboxColumn::make('checkbox');
     }
 
     protected function actions(): array

@@ -4,7 +4,7 @@ namespace Sashalenz\Wiretables\Columns;
 
 use Illuminate\Contracts\View\View;
 
-class Money extends Column
+class MoneyColumn extends Column
 {
     public string $currency;
 

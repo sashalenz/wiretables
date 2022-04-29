@@ -4,7 +4,7 @@ namespace Sashalenz\Wiretables\Columns;
 
 use Illuminate\Contracts\View\View;
 
-class Checkbox extends Column
+class CheckboxColumn extends Column
 {
     protected ?int $width = 2;
 
@@ -15,6 +15,6 @@ class Checkbox extends Column
 
     public function render(): ?View
     {
-        return view('wiretables::columns.checkbox');
+        return view('wiretables::columns.checkbox-column');
     }
 }
