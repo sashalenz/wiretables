@@ -2,7 +2,7 @@
 
 namespace Sashalenz\Wiretables\Contracts;
 
-use Illuminate\View\View;
+use Illuminate\Contracts\View\View;
 
 interface FilterContract
 {
@@ -10,5 +10,5 @@ interface FilterContract
 
     public function value(string $value): self;
 
-    public function renderIt(): View;
+    public function render(): View;
 }

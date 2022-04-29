@@ -23,12 +23,12 @@ trait WithPagination
 
     protected function paginationView(): string
     {
-        return 'wiretable::partials.pagination';
+        return 'wiretables::partials.pagination';
     }
 
     protected function simplePaginationView(): string
     {
-        return 'wiretable::partials.simple-pagination';
+        return 'wiretables::partials.simple-pagination';
     }
 
     protected function resetPage(): void
@@ -38,7 +38,7 @@ trait WithPagination
 
     private function resolvePage()
     {
-        return request()->query(self::$pageKey, 1);
+        return $this->getRequest()->query(self::$pageKey, 1);
     }
 
     private function setPage($page): void

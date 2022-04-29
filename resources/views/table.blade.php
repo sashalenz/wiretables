@@ -70,7 +70,7 @@
             x-cloak
         >
             @foreach($this->filters as $filter)
-                {!! $filter->renderIt() !!}
+                {!! $filter->render() !!}
             @endforeach
         </div>
 

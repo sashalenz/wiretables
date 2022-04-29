@@ -2,7 +2,7 @@
 
 namespace Sashalenz\Wiretables\Traits;
 
-use Sashalenz\Wiretables\Components\Columns\Column;
+use Sashalenz\Wiretables\Contracts\ColumnContract;
 
 trait WithSorting
 {
@@ -22,20 +22,20 @@ trait WithSorting
 
     private function resolveSort(): ?string
     {
-        return request()->query(self::$sortKey, $this->getDefaultSort());
+        return $this->getRequest()->query(self::$sortKey, $this->getDefaultSort());
     }
 
     private function setSort($sort): void
     {
         $this->{self::$sortKey} = (string) $sort;
-        $this->request()->query->set('sort', (string) $sort);
+        $this->getRequest()->query->set('sort', (string) $sort);
     }
 
     private function getAllowedSorts(): array
     {
         return $this->columns()
-                ->filter(fn (Column $column) => $column->isSortable())
-                ->map(fn (Column $column) => $column->getName())
+                ->filter(fn (ColumnContract $column) => $column->isSortable())
+                ->map(fn (ColumnContract $column) => $column->getName())
                 ->values()
                 ->toArray() ?? [];
     }

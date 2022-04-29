@@ -1,8 +1,9 @@
 <?php
 
-namespace Sashalenz\Wiretable\Components\Buttons;
+namespace Sashalenz\Wiretables\Buttons;
 
 use Closure;
+use Illuminate\Contracts\View\View;
 use RuntimeException;
 
 final class GroupButton extends Button
@@ -11,10 +12,6 @@ final class GroupButton extends Button
     protected ?Closure $routeCallback = null;
     protected ?string $icon = 'heroicon-o-dots-vertical';
 
-    /**
-     * @param array $buttons
-     * @return $this
-     */
     public function buttons(array $buttons): self
     {
         $this->buttons = $buttons;
@@ -22,28 +19,17 @@ final class GroupButton extends Button
         return $this;
     }
 
-    /**
-     * @param $row
-     * @return bool
-     */
     public function canDisplay($row): bool
     {
         return count($this->buttons) > 0;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function render()
+    public function render(): View
     {
-        return view('wiretable::components.buttons.group-button');
+        return view('wiretables::components.buttons.group-button');
     }
 
-    /**
-     * @param $row
-     * @return mixed
-     */
-    public function renderIt($row)
+    public function renderIt($row):? View
     {
         if (!$this->canDisplay($row)) {
             return null;

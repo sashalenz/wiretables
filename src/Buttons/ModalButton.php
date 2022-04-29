@@ -1,14 +1,13 @@
 <?php
 
-namespace Sashalenz\Wiretable\Components\Buttons;
+namespace Sashalenz\Wiretables\Buttons;
+
+use Illuminate\Contracts\View\View;
 
 class ModalButton extends Button
 {
-    /**
-     * @inheritDoc
-     */
-    public function render()
+    public function render(): View
     {
-        return view('wiretable::components.buttons.modal-button');
+        return view('wiretables::components.buttons.modal-button');
     }
 }

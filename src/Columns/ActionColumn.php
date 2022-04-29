@@ -8,9 +8,9 @@ use Illuminate\Support\Collection;
 class ActionColumn extends Column
 {
     private ?int $width = 5;
-    private ?Collection $buttons;
+    private array $buttons = [];
 
-    public function withButtons(Collection $buttons): self
+    public function withButtons(array $buttons): self
     {
         $this->buttons = $buttons;
 
@@ -20,7 +20,7 @@ class ActionColumn extends Column
     public function render(): ?View
     {
         return view('wiretables::columns.action-column', [
-            'buttons' => $this->buttons->filter(),
+            'buttons' => collect($this->buttons)->filter()->toArray(),
         ]);
     }
 }

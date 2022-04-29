@@ -2,6 +2,7 @@
 
 namespace Sashalenz\Wiretables;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Livewire\Component;
@@ -106,7 +107,7 @@ abstract class Table extends Component
             );
     }
 
-    public function render()
+    public function render(): View
     {
         return view('wiretables::table');
     }

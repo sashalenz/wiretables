@@ -1,6 +1,8 @@
 <?php
 
-namespace Sashalenz\Wiretable\Components\Buttons;
+namespace Sashalenz\Wiretables\Buttons;
+
+use Illuminate\Contracts\View\View;
 
 class LinkButton extends Button
 {
@@ -12,13 +14,11 @@ class LinkButton extends Button
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function render()
+    public function render(): View
     {
-        return view('wiretable::components.buttons.link-button')->with([
-            'target' => $this->target
-        ]);
+        return view('wiretables::components.buttons.link-button')
+            ->with([
+                'target' => $this->target
+            ]);
     }
 }

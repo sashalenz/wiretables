@@ -167,7 +167,7 @@ abstract class Column extends Component implements ColumnContract
             return $this->getTitle();
         }
 
-        return view('wiretable::partials.table-title')
+        return view('wiretables::partials.table-title')
             ->with([
                 'name' => $this->getName(),
                 'title' => $this->getTitle(),

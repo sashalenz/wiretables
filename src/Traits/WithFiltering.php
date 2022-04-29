@@ -25,7 +25,7 @@ trait WithFiltering
 
     private function resolveFilter()
     {
-        return request()->query(self::$filterKey, '');
+        return $this->getRequest()->query(self::$filterKey, '');
     }
 
     private function updateFilters(): void

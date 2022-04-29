@@ -1,6 +1,6 @@
 <?php
 
-namespace Sashalenz\Wiretable\Components\Buttons;
+namespace Sashalenz\Wiretables\Buttons;
 
 use Illuminate\Contracts\View\View;
 
@@ -10,6 +10,6 @@ final class RestoreButton extends Button
 
     public function render(): View
     {
-        return view('wiretable::components.buttons.restore-button');
+        return view('wiretables::components.buttons.restore-button');
     }
 }

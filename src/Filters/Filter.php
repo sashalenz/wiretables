@@ -2,7 +2,6 @@
 
 namespace Sashalenz\Wiretables\Filters;
 
-use Illuminate\View\View;
 use Sashalenz\Wiretables\Contracts\FilterContract;
 use Spatie\QueryBuilder\AllowedFilter;
 
@@ -49,6 +48,4 @@ abstract class Filter extends AllowedFilter implements FilterContract
 
         return $newValue !== $this->getDefault() ? $newValue : null;
     }
-
-    abstract public function renderIt(): View;
 }
