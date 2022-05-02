@@ -8,11 +8,16 @@ trait WithSorting
 {
     protected static string $sortKey = 'sort';
 
-    protected function initializeWithSorting(): void
+    public function bootWithSorting(): void
     {
-        $this->queryString[self::$sortKey] = ['except' => $this->getDefaultSort()];
-
         $this->setSort($this->resolveSort());
+    }
+
+    public function queryStringWithSorting(): array
+    {
+        return [
+            self::$sortKey => ['except' => $this->getDefaultSort()]
+        ];
     }
 
     protected function resetSort(): void
@@ -28,7 +33,8 @@ trait WithSorting
     private function setSort($sort): void
     {
         $this->{self::$sortKey} = (string) $sort;
-        $this->getRequest()->query->set('sort', (string) $sort);
+
+        $this->getRequest()->query->set(self::$sortKey, (string) $sort);
     }
 
     private function getAllowedSorts(): array
@@ -42,13 +48,12 @@ trait WithSorting
 
     public function sortBy($columnName): void
     {
-        // determinate sort by selected column
-        $sort = ($this->getSortProperty() !== $columnName) ? $columnName : sprintf('-%s', $columnName);
+        $this->setSort(
+            ($this->getSortProperty() !== $columnName)
+                ? $columnName
+                : sprintf('-%s', $columnName)
+        );
 
-        // call private function that setting sort
-        $this->setSort($sort);
-
-        // reset page if is not first
         if (method_exists($this, 'resetPage')) {
             $this->resetPage();
         }
@@ -58,7 +63,7 @@ trait WithSorting
     {
         return property_exists($this, 'defaultSort')
             ? $this->defaultSort
-            : '-' . $this->columns()->first()->getName();
+            : sprintf('-%s', $this->columns()->first()->getName());
     }
 
     public function getSortProperty(): string

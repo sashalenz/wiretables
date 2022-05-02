@@ -3,7 +3,7 @@
 namespace Sashalenz\Wiretables\Columns;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Collection;
+use Sashalenz\Wiretables\Contracts\ButtonContract;
 
 class ActionColumn extends Column
 {
@@ -20,7 +20,8 @@ class ActionColumn extends Column
     public function render(): ?View
     {
         return view('wiretables::columns.action-column', [
-            'buttons' => collect($this->buttons)->filter()->toArray(),
+            'buttons' => collect($this->buttons)
+                ->filter(fn ($row) => $row instanceof ButtonContract),
         ]);
     }
 }

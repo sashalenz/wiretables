@@ -2,115 +2,97 @@
 
 namespace Sashalenz\Wiretables\Traits;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Str;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Sashalenz\Wiretables\Buttons\LinkButton;
+use Sashalenz\Wiretables\Buttons\ModalButton;
 use Sashalenz\Wiretables\Columns\ActionColumn;
+use Sashalenz\Wiretables\Modals\DeleteModal;
+use Sashalenz\Wiretables\Modals\RestoreModal;
 
 trait WithButtons
 {
-    private string $indexView = 'index';
-    private string $createView = 'create';
-    private string $showView = 'show';
-    private string $editView = 'edit';
+    use AuthorizesRequests;
 
     private array $actionButtons = [];
-    public ?string $createButton = null;
+    protected ?string $createButton = null;
+    protected ?string $showButton = null;
+    protected ?string $editButton = null;
 
-    public function initializeWithButtons(): void
+    public function bootWithButtons(): void
     {
-        if (! isset($this->model)) {
-            return;
+//
+    }
+
+    protected function can(string $ability, Model $model): bool
+    {
+        try {
+            $this->authorize($ability, $model);
+
+            return true;
+        } catch (AuthorizationException) {
+            return false;
+        }
+    }
+
+    private function getButtons(): array
+    {
+        $buttons = [];
+
+        if ($this->showButton) {
+            $buttons[] = LinkButton::make('show')
+                ->icon('heroicon-o-eye')
+                ->routeUsing(fn ($row) => route($this->showButton, $row))
+                ->displayIf(fn ($row) => $this->can('view', $row));
         }
 
-//        $model = app($this->model);
+        if ($this->editButton) {
+            $buttons[] = ModalButton::make('edit')
+                ->icon('heroicon-o-pencil')
+                ->modal($this->editButton)
+                ->withParams(fn ($row) => [
+                    'model' => $row->getKey()
+                ])
+                ->displayIf(fn ($row) => $this->can('update', $row));
+        }
 
-//        if (method_exists($model, 'getRoute') && $model->hasRoute($this->showView)) {
-//            $this->actionButtons[] = LinkButton::make($this->showView)
-//                ->icon('heroicon-o-eye')
-//                ->routeUsing(fn ($row) => route($row->getRoute($this->showView), $row))
-//                ->displayIf(fn ($row) => is_null($row->deleted_at));
-//        }
-//
-//        if (method_exists($model, 'getRoute') && $model->hasRoute($this->editView)) {
-//            $this->actionButtons[] = ModalButton::make($this->editView)
-//                ->icon('heroicon-o-pencil')
-//                ->routeUsing(fn ($row) => route($row->getRoute($this->editView), $row))
-//                ->displayIf(fn ($row) => is_null($row->deleted_at));
-//        }
+        $buttons[] = ModalButton::make('delete')
+            ->icon('heroicon-o-trash')
+            ->modal(DeleteModal::getName())
+            ->withParams(fn ($row) => [
+                'modelName' => get_class($row),
+                'modelId' => $row->getKey()
+            ])
+            ->displayIf(fn ($row) => $this->can('delete', $row));
 
-//        $this->actionButtons[] = DeleteButton::make('delete')
-//            ->displayIf(fn ($row) => is_null($row->deleted_at));
-//
-//        if (method_exists($this->model, 'bootSoftDeletes')) {
-//            $this->actionButtons[] = RestoreButton::make('restore')
-//                ->displayIf(fn ($row) => !is_null($row->deleted_at));
-//        }
+        if (method_exists($this->model, 'bootSoftDeletes')) {
+            $buttons[] = ModalButton::make('restore')
+                ->icon('heroicon-o-reply')
+                ->modal(RestoreModal::getName())
+                ->withParams(fn ($row) => [
+                    'modelName' => get_class($row),
+                    'modelId' => $row->getKey()
+                ])
+                ->displayIf(fn ($row) => $this->can('restore', $row));
+        }
 
-//        if (method_exists($model, 'getRoute') && $model->hasRoute($this->createView)) {
-//            $this->createButton = $model->getRoute($this->createView);
-//        }
+        return $buttons;
     }
 
     protected function getActionColumn(): ?ActionColumn
     {
-        $this->actionButtons = array_merge($this->buttons(), $this->actionButtons);
+        $buttons = array_merge(
+            $this->buttons(),
+            $this->getButtons()
+        );
 
-        if (!count($this->actionButtons)) {
+        if (!count($buttons)) {
             return null;
         }
 
         return ActionColumn::make('action')
-            ->withButtons($this->actionButtons);
-    }
-
-    protected static function getRoute(string $action, Model $model): ?string
-    {
-        $alias = collect([
-            'index' => 'viewAny',
-            'show' => 'view',
-            'info' => 'view',
-            'edit' => 'update',
-            'destroy' => 'delete',
-        ])
-            ->get($action, $action);
-
-        $isAuthorized = (bool) auth('admin')
-            ->user()
-            ?->can($alias, $model);
-
-        if (!$isAuthorized) {
-            return null;
-        }
-
-        $routeName = collect([
-            'admin',
-            defined(get_class($model) . '::PARENT') ? $model::PARENT : null,
-            defined(get_class($model) . '::NESTED') ? $model::NESTED : null,
-            defined(get_class($model) . '::TITLE') ? $model::TITLE : null,
-            $action,
-        ])
-            ->filter()
-            ->implode('.');
-
-        if (!Route::has($routeName)) {
-            return null;
-        }
-
-        if (defined(get_class($model) . '::NESTED')) {
-            $parent = $model->{Str::of($model::NESTED)->singular()->toString()};
-
-            if (!$parent) {
-                return null;
-            }
-
-            return route($routeName, [
-                $parent->getKey(),
-                $model->getKey(),
-            ]);
-        }
-
-        return route($routeName, $model->getKey());
+            ->withButtons($buttons);
     }
 
     protected function buttons(): array

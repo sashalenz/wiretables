@@ -7,11 +7,16 @@ trait WithSearching
     public bool $disableSearch = false;
     protected static string $searchKey = 'search';
 
-    protected function initializeWithSearching(): void
+    public function bootWithSearching(): void
     {
-        $this->queryString[self::$searchKey] = ['except' => ''];
-
         $this->setSearch($this->resolveSearch());
+    }
+
+    public function queryStringWithSearching(): array
+    {
+        return [
+            self::$searchKey => ['except' => '']
+        ];
     }
 
     protected function resetSearch(): void

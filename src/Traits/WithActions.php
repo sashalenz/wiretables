@@ -8,6 +8,11 @@ use Sashalenz\Wiretables\Contracts\ActionContract;
 
 trait WithActions
 {
+    public function bootWithActions(): void
+    {
+//
+    }
+
     public function getActionsProperty(): Collection
     {
         return collect($this->actions())

@@ -12,15 +12,22 @@ trait WithFiltering
     private Collection $filters;
     protected static string $filterKey = 'filter';
 
-    public function initializeWithFiltering(): void
+    public function bootWithFiltering(): void
     {
-        $this->queryString[self::$filterKey] = ['except' => ''];
-
         $queryFilters = $this->resolveFilter();
 
-        $this->filters = ($queryFilters) ? $this->expandFilters($queryFilters) : collect();
+        $this->filters = ($queryFilters)
+            ? $this->expandFilters($queryFilters)
+            : collect();
 
         $this->updateFilters();
+    }
+
+    public function queryStringWithFiltering(): array
+    {
+        return [
+            self::$filterKey => ['except' => '']
+        ];
     }
 
     private function resolveFilter()
@@ -88,7 +95,7 @@ trait WithFiltering
 
         $this->filters->put($filter->getName(), $castedValue);
 
-        $this->filters = $this->filters->reject(fn ($filter) => is_null($filter));
+        $this->filters = $this->filters->filter();
 
         $this->updateFilters();
 
@@ -103,11 +110,13 @@ trait WithFiltering
 
         return $this->filters()
             ->when(
-                ! is_null($trashedFilter),
+                !is_null($trashedFilter),
                 fn (Collection $rows) => $rows->push($trashedFilter)
             )
             ->each(
-                fn (FilterContract $filter) => $filter->value($this->filters->get($filter->getName()))
+                fn (FilterContract $filter) => $filter->value(
+                    $this->filters->get($filter->getName())
+                )
             );
     }
 

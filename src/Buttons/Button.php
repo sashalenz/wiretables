@@ -4,7 +4,6 @@ namespace Sashalenz\Wiretables\Buttons;
 
 use Closure;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Collection;
 use Illuminate\View\Component;
 use RuntimeException;
 use Sashalenz\Wiretables\Contracts\ButtonContract;
@@ -14,15 +13,17 @@ abstract class Button extends Component implements ButtonContract
     protected string $name;
     protected ?string $title = null;
     protected ?string $icon = null;
-    protected Collection $class;
-    protected ?Closure $routeCallback = null;
+
+    protected array $classes = [];
+
     protected ?Closure $styleCallback = null;
     protected ?Closure $displayCondition = null;
+    protected ?Closure $routeCallback = null;
+    protected ?Closure $routeParams = null;
 
     public function __construct($name)
     {
         $this->name = $name;
-        $this->class = collect();
     }
 
     public function title(string $title): self
@@ -32,11 +33,6 @@ abstract class Button extends Component implements ButtonContract
         return $this;
     }
 
-    public function getTitle(): ?string
-    {
-        return $this->title;
-    }
-
     public function icon(string $icon): self
     {
         $this->icon = $icon;
@@ -44,37 +40,14 @@ abstract class Button extends Component implements ButtonContract
         return $this;
     }
 
-    protected function getIcon(): ?string
+    public function class(string $classes): self
     {
-        return $this->icon;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function class(...$class): self
-    {
-        $this->class->push($class);
+        $this->classes = array_merge(
+            $this->classes,
+            explode(' ', $classes)
+        );
 
         return $this;
-    }
-
-    protected function getClass($row): ?string
-    {
-        $class = is_callable($this->styleCallback) ? call_user_func($this->styleCallback, $row) : null;
-
-        if (! is_string($class) && ! is_null($class)) {
-            throw new RuntimeException('Return value must be a string');
-        }
-
-        $this->class->push($class);
-
-        return $this->class
-            ->filter()
-            ->flatten()
-            ->implode(' ');
     }
 
     public function styleUsing(callable $styleCallback): self
@@ -91,9 +64,11 @@ abstract class Button extends Component implements ButtonContract
         return $this;
     }
 
-    protected function hasRouteCallback(): bool
+    public function withParams(callable $params): self
     {
-        return is_callable($this->routeCallback);
+        $this->routeParams = $params;
+
+        return $this;
     }
 
     public function displayIf(callable $displayCondition): self
@@ -103,14 +78,59 @@ abstract class Button extends Component implements ButtonContract
         return $this;
     }
 
-    protected function canDisplay($row): bool
+    public function getTitle(): ?string
     {
-        return is_callable($this->displayCondition) ? call_user_func($this->displayCondition, $row) : true;
+        return $this->title;
     }
 
-    protected function getRoute($row): ?string
+    protected function getIcon(): ?string
     {
-        return is_callable($this->routeCallback) ? call_user_func($this->routeCallback, $row) : null;
+        return $this->icon;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    protected function getClass($row): ?string
+    {
+        return collect($this->classes)
+            ->when(
+                is_callable($this->styleCallback) && !is_null($row),
+                fn ($class) => $class->push((string)call_user_func($this->styleCallback, $row))
+            )
+            ->filter()
+            ->flatten()
+            ->unique()
+            ->implode(' ');
+
+    }
+
+    protected function canDisplay($row): bool
+    {
+        return is_callable($this->displayCondition)
+            ? call_user_func($this->displayCondition, $row)
+            : true;
+    }
+
+    private function hasRouteCallback(): bool
+    {
+        return is_callable($this->routeCallback);
+    }
+
+    protected function getRoute($row)
+    {
+        return $this->hasRouteCallback()
+            ? call_user_func($this->routeCallback, $row)
+            : null;
+    }
+
+    protected function getRouteParams($row)
+    {
+        return is_callable($this->routeParams)
+            ? call_user_func($this->routeParams, $row)
+            : null;
     }
 
     public static function make(string $name): static
@@ -118,23 +138,24 @@ abstract class Button extends Component implements ButtonContract
         return new static($name);
     }
 
-    public function renderIt($row): ?View
+    public function renderIt($row):? View
     {
-        if (! $this->canDisplay($row)) {
+        if (!$this->canDisplay($row)) {
             return null;
         }
 
-        if (! $this->getTitle() && ! $this->getIcon()) {
+        if (!$this->getTitle() && !$this->getIcon()) {
             throw new RuntimeException('Title or Icon must be presented');
         }
 
         return $this->render()
             ->with([
-                'row' => $row,
-                'class' => $this->getClass($row),
-                'route' => $this->getRoute($row),
                 'icon' => $this->getIcon(),
                 'title' => $this->getTitle(),
+                'class' => $this->getClass($row),
+                'route' => $this->getRoute($row),
+                'params' => $this->getRouteParams($row),
+                'row' => $row
             ]);
     }
 }

@@ -1,34 +1,43 @@
 @if($this->createButton)
-    @push('actions')
+    @section('buttons')
         <button
             type="button"
-            class="inline-flex items-center md:px-4 p-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:ring-primary-500 focus:ring-2 focus:ring-offset-2 focus:border-primary-500 active:text-gray-800 active:bg-gray-50 transition duration-150 ease-in-out"
-            x-data="{ url: '{{ route($this->createButton) }}' }"
-            @click.prevent="$dispatch('open-modal', url)"
+            class="inline-flex space-x-1 items-center text-sm leading-5 text-primary-500 hover:text-primary-700 focus:outline-none active:text-primary-700 transition duration-150 ease-in-out"
+            onclick="Livewire.emit('openModal', '{{ $this->createButton }}')"
         >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
             </svg>
-            <span class="hidden md:inline-block ml-2">
-                @lang('wiretable::add')
+            <span class="hidden md:inline-block">
+                @lang('wiretables::table.add')
             </span>
         </button>
-    @endpush
+    @endsection
 @endif
 
-<div class="flex flex-col space-y-3">
-    <div class="sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" x-data="{ filtersCount: {{ $this->filters->count() }}, filtersAreShown: false }" x-init="filtersAreShown = {{ $this->filter ? 'true' : 'false' }}">
+<div class="flex flex-col space-y-3 py-2 sm:px-4">
+    <div
+        x-data="{ filtersCount: {{ $this->filters->count() }}, filtersAreShown: false }"
+        x-init="filtersAreShown = {{ $this->filter ? 'true' : 'false' }}"
+    >
         <div class="py-2 flex justify-between items-center">
             @if(!$this->disableSearch)
                 <div class="lg:max-w-xs">
-                    <label for="search" class="sr-only">{{ __('wiretable::table.search') }}</label>
+                    <label for="search" class="sr-only">{{ __('wiretables::table.search') }}</label>
                     <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <div class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                            <svg class="h-4 w-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
                             </svg>
                         </div>
-                        <input id="search" class="block w-full pl-10 pr-3 py-1 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-primary-300  focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition duration-150 ease-in-out" placeholder="{{ __('wiretable::table.search') }}" type="search" value="{{  $this->search }}" wire:input.debounce.500ms="searchBy($event.target.value)">
+                        <input
+                            id="search"
+                            placeholder="{{ __('wiretables::table.search') }}"
+                            type="search"
+                            value="{{  $this->search }}"
+                            wire:input.debounce.500ms="searchBy($event.target.value)"
+                            class="block w-full pl-8 pr-2 py-1 border border-gray-200 leading-5 bg-white placeholder-gray-300 focus:outline-none focus:placeholder-gray-400 focus:border-primary-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition duration-150 ease-in-out"
+                        >
                     </div>
                 </div>
             @endif
@@ -54,8 +63,8 @@
                 </a>
                 <a href="#"
                    class="p-1 text-gray-400 rounded-full hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
-                   wire:click.prevent="refresh"
-                   @refresh-table.window="@this.call('refresh')"
+                   wire:click.prevent="$refresh"
+                   @refresh-table.window="@this.call('$refresh')"
                 >
                     <svg class="w-5 h-5" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
                         <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
@@ -65,8 +74,14 @@
         </div>
 
         <div
-            class="flex justify-between bg-white shadow sm:rounded-lg px-4 py-2 whitespace-nowrap last:border-0 text-gray-700 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6 align-center items-center"
-            x-show.transition.opacity="filtersCount && filtersAreShown"
+            class="flex justify-between bg-white border border-gray-200 px-4 py-2 whitespace-nowrap text-gray-700 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6 align-center items-center"
+            x-show="filtersCount && filtersAreShown"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 scale-90"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-90"
             x-cloak
         >
             @foreach($this->filters as $filter)
@@ -93,21 +108,21 @@
         </div>
     </div>
 
-    <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-        <div class="align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200">
-            <table class="min-w-full"
+    <div class="overflow-x-auto w-full">
+        <div class="align-middle inline-block w-full border overflow-hidden border-gray-200">
+            <table class="w-full"
                    x-data="{ moving: false }"
             >
                 <thead>
                 <tr>
                     @foreach($this->columns as $column)
-                        <th class="px-3 py-2 md:px-6 md:py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider" @if($column->getWidth())style="width: {{ $column->getWidth() }}%;" @endif>
+                        <th class="px-3 py-2 md:px-6 md:py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider" @if($column->getWidth())style="width: {{ $column->getWidth() }}%;"@endif>
                             {!! $column->renderTitle() !!}
                         </th>
                     @endforeach
                 </tr>
                 </thead>
-                <tbody class="bg-white xl:text-base text-sm leading-6 md:leading-5 text-gray-700"
+                <tbody class="bg-white leading-6 md:leading-5 text-gray-700"
                        @if(method_exists($this, 'getUseSortProperty') && $this->useSort)
                            x-on:drop="
                             moving = false
@@ -140,7 +155,7 @@
                         @endif
                     >
                         @foreach($this->columns as $column)
-                            <td class="p-2 md:p-4 xl:px-6 border-b border-gray-200 {{ $column->getClass($row) }}">
+                            <td @class(['p-2 md:p-4 xl:px-6 border-b border-gray-200', $column->getClass($row)])>
                                 {!! $column->renderIt($row) !!}
                             </td>
                         @endforeach
@@ -149,7 +164,7 @@
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap border-b border-gray-200" colspan="100">
                             <div class="flex items-center text-gray-500 justify-center">
-                                @lang('wiretable::table_is_empty')
+                                @lang('wiretables::table.table_is_empty')
                             </div>
                         </td>
                     </tr>

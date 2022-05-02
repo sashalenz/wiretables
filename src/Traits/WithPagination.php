@@ -10,15 +10,21 @@ trait WithPagination
     public bool $simplePagination = false;
     protected static string $pageKey = 'page';
 
-    protected function initializeWithPagination(): void
+    public function bootWithPagination(): void
     {
-        $this->queryString[self::$pageKey] = ['except' => 1];
-
         $this->setPage($this->resolvePage());
 
         Paginator::currentPageResolver(fn () => $this->{self::$pageKey});
+
         Paginator::defaultView($this->paginationView());
         Paginator::defaultSimpleView($this->simplePaginationView());
+    }
+
+    public function queryStringWithPagination(): array
+    {
+        return [
+            self::$pageKey => ['except' => 1]
+        ];
     }
 
     protected function paginationView(): string

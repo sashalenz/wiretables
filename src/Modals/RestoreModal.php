@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use LivewireUI\Modal\ModalComponent;
 
-class DeleteModal extends ModalComponent
+class RestoreModal extends ModalComponent
 {
     use AuthorizesRequests;
 
@@ -18,7 +18,9 @@ class DeleteModal extends ModalComponent
 
     public function mount(string $modelName, int $modelId): void
     {
-        $this->model = app($modelName)->findOrFail($modelId);
+        $this->model = app($modelName)
+            ->onlyTrashed()
+            ->findOrFail($modelId);
     }
 
     /**
@@ -26,9 +28,9 @@ class DeleteModal extends ModalComponent
      */
     public function submit(): void
     {
-        $this->authorize('delete', $this->model);
+        $this->authorize('restore', $this->model);
 
-        $this->model->delete();
+        $this->model->restore();
 
         $this->closeModalWithEvents([
             '$refresh'
@@ -37,6 +39,6 @@ class DeleteModal extends ModalComponent
 
     public function render(): View
     {
-        return view('wiretables::modals.delete-modal');
+        return view('wiretables::modals.restore-modal');
     }
 }

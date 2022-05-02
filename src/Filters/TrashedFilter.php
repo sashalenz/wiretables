@@ -11,33 +11,18 @@ class TrashedFilter extends Filter
     {
         return Select::make(
             name: $this->name,
-            label: $this->title,
-            placeholder: $this->placeholder,
-            required: true,
-            value: $this->value,
+            placeholder: __('wiretables::filter.without_trashed'),
+            showLabel: false,
+            value: $this->getValue($this->value),
             options: [
-                null => __('wiretables::without_trashed'),
-                'with' => __('wiretables::with_trashed'),
-                'only' => __('wiretables::only_trashed'),
+                null => __('wiretables::filter.without_trashed'),
+                'with' => __('wiretables::filter.with_trashed'),
+                'only' => __('wiretables::filter.only_trashed'),
             ]
         )
             ->withAttributes([
-                "wire:change" => "addFilter"
+                "wire:change" => "addFilter('$this->name', \$event.target.value)"
             ])
             ->render();
-//        return SelectField::make($this->name, $this->title)
-//            ->size($this->size)
-//            ->placeholder($this->placeholder)
-//            ->required()
-//            ->value($this->value)
-//            ->options([
-//                null => __('wiretables::without_trashed'),
-//                'with' => __('wiretables::with_trashed'),
-//                'only' => __('wiretables::only_trashed'),
-//            ])
-//            ->withAttributes([
-//                "wire:change" => "addFilter",
-//            ])
-//            ->renderIt();
     }
 }

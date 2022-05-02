@@ -2,11 +2,12 @@
 
 namespace Sashalenz\Wiretables;
 
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 use Sashalenz\Wiretables\Columns\Column;
+use Sashalenz\Wiretables\Contracts\TableContract;
 use Sashalenz\Wiretables\Filters\SearchFilter;
 use Sashalenz\Wiretables\Traits\WithActions;
 use Sashalenz\Wiretables\Traits\WithButtons;
@@ -17,7 +18,7 @@ use Sashalenz\Wiretables\Traits\WithSorting;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\QueryBuilderRequest;
 
-abstract class Table extends Component
+abstract class Table extends Component implements TableContract
 {
     use WithPagination;
     use WithFiltering;
@@ -26,19 +27,15 @@ abstract class Table extends Component
     use WithButtons;
     use WithActions;
 
-    protected string $model;
+    protected Model $model;
+    public ?string $layout = null;
     protected $request;
 
     protected $listeners = [
-        'refresh',
+        '$refresh',
         'resetTable',
         'addFilter',
     ];
-
-    public function refresh(): void
-    {
-//
-    }
 
     public function resetTable(): void
     {
@@ -50,7 +47,7 @@ abstract class Table extends Component
 
     public function getRequest(): QueryBuilderRequest
     {
-        if (! $this->request) {
+        if (!$this->request) {
             $this->request = app(QueryBuilderRequest::class);
         }
 
@@ -64,19 +61,23 @@ abstract class Table extends Component
 
         return $this->columns()
             ->when(
-                method_exists($this, 'initializeWithSearching') && ! is_null($this->getSearchProperty()),
-                fn (Collection $rows) => $rows->each(fn (Column $column) => $column->setHighlight($this->getSearchProperty()))
+                method_exists($this, 'bootWithSearching') && ! is_null($this->getSearchProperty()),
+                fn (Collection $rows) => $rows->each(
+                    fn (Column $column) => $column->setHighlight($this->getSearchProperty())
+                )
             )
             ->when(
-                method_exists($this, 'initializeWithSorting') && ! is_null($this->getSortProperty()),
-                fn (Collection $rows) => $rows->each(fn (Column $column) => $column->setCurrentSort($this->getSortProperty()))
+                method_exists($this, 'bootWithSorting') && ! is_null($this->getSortProperty()),
+                fn (Collection $rows) => $rows->each(
+                    fn (Column $column) => $column->setCurrentSort($this->getSortProperty())
+                )
             )
             ->when(
-                method_exists($this, 'initializeWithButtons') && ! is_null($actionColumn),
+                method_exists($this, 'bootWithButtons') && !is_null($actionColumn),
                 fn (Collection $rows) => $rows->push($actionColumn)
             )
             ->when(
-                method_exists($this, 'initializeWithActions') && ! is_null($checkboxColumn),
+                method_exists($this, 'bootWithActions') && ! is_null($checkboxColumn),
                 fn (Collection $rows) => $rows->prepend($checkboxColumn)
             );
     }
@@ -85,11 +86,13 @@ abstract class Table extends Component
     {
         $builder = QueryBuilder::for($this->query(), $this->getRequest());
 
-        if (method_exists($this, 'initializeWithFiltering')) {
-            $builder = $builder->allowedFilters($this->getFiltersProperty()->toArray());
+        if (method_exists($this, 'bootWithFiltering')) {
+            $builder = $builder->allowedFilters(
+                $this->getFiltersProperty()->toArray()
+            );
         }
 
-        if (method_exists($this, 'initializeWithSorting')) {
+        if (method_exists($this, 'bootWithSorting')) {
             $builder = $builder
                 ->defaultSort($this->getDefaultSort())
                 ->allowedSorts(...$this->getAllowedSorts());
@@ -97,7 +100,7 @@ abstract class Table extends Component
 
         return $builder
             ->when(
-                method_exists($this, 'initializeWithSearching') && ! $this->disableSearch && $this->getSearchProperty(),
+                method_exists($this, 'bootWithSearching') && ! $this->disableSearch && $this->getSearchProperty(),
                 new SearchFilter($this->getSearchProperty())
             )
             ->when(
@@ -107,9 +110,13 @@ abstract class Table extends Component
             );
     }
 
-    public function render(): View
+    public function render()
     {
-        return view('wiretables::table');
+        return view('wiretables::table')
+            ->extends(
+                $this->layout ?? config('wiretables.layout'),
+                ['title' => $this->getTitleProperty()]
+            );
     }
 
     abstract public function getTitleProperty(): string;

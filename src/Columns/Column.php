@@ -5,6 +5,7 @@ namespace Sashalenz\Wiretables\Columns;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Illuminate\View\Component;
 use RuntimeException;
 use Sashalenz\Wiretables\Contracts\ColumnContract;
@@ -161,7 +162,7 @@ abstract class Column extends Component implements ColumnContract
         return data_get($row->toArray(), $this->getName());
     }
 
-    public function renderTitle(): string|View
+    public function renderTitle():? string
     {
         if (is_null($this->currentSort) && ! $this->isSortable()) {
             return $this->getTitle();
@@ -171,13 +172,16 @@ abstract class Column extends Component implements ColumnContract
             ->with([
                 'name' => $this->getName(),
                 'title' => $this->getTitle(),
-                'isCurrentSort' => str_replace('-', '', $this->currentSort) === $this->getName(),
+                'isCurrentSort' => Str::of($this->currentSort)
+                    ->replaceFirst('-', '')
+                    ->is($this->getName()),
                 'isSortUp' => $this->currentSort === $this->getName(),
                 'sort' => $this->currentSort,
-            ]);
+            ])
+            ->render();
     }
 
-    public function renderIt($row): ?string
+    public function renderIt($row):? string
     {
         $condition = is_callable($this->displayCondition)
             ? call_user_func($this->displayCondition, $row)
