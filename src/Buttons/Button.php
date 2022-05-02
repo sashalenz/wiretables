@@ -97,14 +97,13 @@ abstract class Button extends Component implements ButtonContract
     {
         return collect($this->classes)
             ->when(
-                is_callable($this->styleCallback) && !is_null($row),
+                is_callable($this->styleCallback) && ! is_null($row),
                 fn ($class) => $class->push((string)call_user_func($this->styleCallback, $row))
             )
             ->filter()
             ->flatten()
             ->unique()
             ->implode(' ');
-
     }
 
     protected function canDisplay($row): bool
@@ -138,13 +137,13 @@ abstract class Button extends Component implements ButtonContract
         return new static($name);
     }
 
-    public function renderIt($row):? View
+    public function renderIt($row): ?View
     {
-        if (!$this->canDisplay($row)) {
+        if (! $this->canDisplay($row)) {
             return null;
         }
 
-        if (!$this->getTitle() && !$this->getIcon()) {
+        if (! $this->getTitle() && ! $this->getIcon()) {
             throw new RuntimeException('Title or Icon must be presented');
         }
 
@@ -155,7 +154,7 @@ abstract class Button extends Component implements ButtonContract
                 'class' => $this->getClass($row),
                 'route' => $this->getRoute($row),
                 'params' => $this->getRouteParams($row),
-                'row' => $row
+                'row' => $row,
             ]);
     }
 }

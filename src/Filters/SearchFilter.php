@@ -24,7 +24,7 @@ class SearchFilter
                     $fillable = $model->getSearchable();
                 }
 
-                if (!isset($fillable) || !count($fillable)) {
+                if (! isset($fillable) || ! count($fillable)) {
                     $fillable = $query->getModel()->getFillable();
                 }
 

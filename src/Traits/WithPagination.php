@@ -23,7 +23,7 @@ trait WithPagination
     public function queryStringWithPagination(): array
     {
         return [
-            self::$pageKey => ['except' => 1]
+            self::$pageKey => ['except' => 1],
         ];
     }
 

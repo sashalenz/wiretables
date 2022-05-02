@@ -21,7 +21,7 @@ class TrashedFilter extends Filter
             ]
         )
             ->withAttributes([
-                "wire:change" => "addFilter('$this->name', \$event.target.value)"
+                "wire:change" => "addFilter('$this->name', \$event.target.value)",
             ])
             ->render();
     }

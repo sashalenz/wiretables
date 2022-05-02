@@ -26,7 +26,7 @@ trait WithFiltering
     public function queryStringWithFiltering(): array
     {
         return [
-            self::$filterKey => ['except' => '']
+            self::$filterKey => ['except' => ''],
         ];
     }
 
@@ -110,7 +110,7 @@ trait WithFiltering
 
         return $this->filters()
             ->when(
-                !is_null($trashedFilter),
+                ! is_null($trashedFilter),
                 fn (Collection $rows) => $rows->push($trashedFilter)
             )
             ->each(

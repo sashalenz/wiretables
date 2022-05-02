@@ -52,7 +52,7 @@ trait WithButtons
                 ->icon('heroicon-o-pencil')
                 ->modal($this->editButton)
                 ->withParams(fn ($row) => [
-                    'model' => $row->getKey()
+                    'model' => $row->getKey(),
                 ])
                 ->displayIf(fn ($row) => $this->can('update', $row));
         }
@@ -62,7 +62,7 @@ trait WithButtons
             ->modal(DeleteModal::getName())
             ->withParams(fn ($row) => [
                 'modelName' => get_class($row),
-                'modelId' => $row->getKey()
+                'modelId' => $row->getKey(),
             ])
             ->displayIf(fn ($row) => $this->can('delete', $row));
 
@@ -72,7 +72,7 @@ trait WithButtons
                 ->modal(RestoreModal::getName())
                 ->withParams(fn ($row) => [
                     'modelName' => get_class($row),
-                    'modelId' => $row->getKey()
+                    'modelId' => $row->getKey(),
                 ])
                 ->displayIf(fn ($row) => $this->can('restore', $row));
         }
@@ -87,7 +87,7 @@ trait WithButtons
             $this->getButtons()
         );
 
-        if (!count($buttons)) {
+        if (! count($buttons)) {
             return null;
         }
 
