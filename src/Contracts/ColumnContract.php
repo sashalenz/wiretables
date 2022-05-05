@@ -8,6 +8,8 @@ interface ColumnContract
 {
     public function isSortable(): bool;
 
+    public function getSortableField(): string;
+
     public function getName(): string;
 
     public function render(): ?View;

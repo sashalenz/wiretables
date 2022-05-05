@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Livewire\Component;
+use Sashalenz\Searchable\Filters\SearchFilter;
 use Sashalenz\Wiretables\Columns\Column;
 use Sashalenz\Wiretables\Contracts\TableContract;
-use Sashalenz\Wiretables\Filters\SearchFilter;
 use Sashalenz\Wiretables\Traits\WithActions;
 use Sashalenz\Wiretables\Traits\WithButtons;
 use Sashalenz\Wiretables\Traits\WithFiltering;
@@ -61,15 +61,15 @@ abstract class Table extends Component implements TableContract
 
         return $this->columns()
             ->when(
-                method_exists($this, 'bootWithSearching') && ! is_null($this->getSearchProperty()),
+                method_exists($this, 'bootWithSearching') && $this->getSearchProperty(),
                 fn (Collection $rows) => $rows->each(
-                    fn (Column $column) => $column->setHighlight($this->getSearchProperty())
+                    fn (Column $column) => $column->highlight($this->getSearchProperty())
                 )
             )
             ->when(
-                method_exists($this, 'bootWithSorting') && ! is_null($this->getSortProperty()),
+                method_exists($this, 'bootWithSorting') && !is_null($this->getSortProperty()),
                 fn (Collection $rows) => $rows->each(
-                    fn (Column $column) => $column->setCurrentSort($this->getSortProperty())
+                    fn (Column $column) => $column->currentSort($this->getSortProperty())
                 )
             )
             ->when(
@@ -77,7 +77,7 @@ abstract class Table extends Component implements TableContract
                 fn (Collection $rows) => $rows->push($actionColumn)
             )
             ->when(
-                method_exists($this, 'bootWithActions') && ! is_null($checkboxColumn),
+                method_exists($this, 'bootWithActions') && !is_null($checkboxColumn),
                 fn (Collection $rows) => $rows->prepend($checkboxColumn)
             );
     }
@@ -101,7 +101,7 @@ abstract class Table extends Component implements TableContract
         return $builder
             ->when(
                 method_exists($this, 'bootWithSearching') && ! $this->disableSearch && $this->getSearchProperty(),
-                new SearchFilter($this->getSearchProperty())
+                new SearchFilter($this->getSearchProperty(), $this->strict)
             )
             ->when(
                 $this->simplePagination === true,

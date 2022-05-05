@@ -7,7 +7,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\View\Component;
-use RuntimeException;
 use Sashalenz\Wiretables\Contracts\ColumnContract;
 
 abstract class Column extends Component implements ColumnContract
@@ -16,14 +15,15 @@ abstract class Column extends Component implements ColumnContract
     private Collection $class;
     private ?string $title = null;
     private bool $sortable = false;
+    private ?string $sortableField = null;
     private ?int $width = null;
-    private ?string $highlight = null;
     private ?Closure $styleCallback = null;
     private ?Closure $displayCallback = null;
     private ?Closure $displayCondition = null;
-    private ?string $currentSort = null;
 
-    protected bool $hasHighlight = false;
+    protected ?string $currentSort = null;
+    protected ?string $highlight = null;
+    public bool $hasHighlight = false;
 
     public function __construct($name)
     {
@@ -40,21 +40,12 @@ abstract class Column extends Component implements ColumnContract
         return $this;
     }
 
-    public function getTitle(): ?string
-    {
-        return $this->title;
-    }
-
-    public function sortable(): self
+    public function sortable(?string $field = null): self
     {
         $this->sortable = true;
+        $this->sortableField = $field;
 
         return $this;
-    }
-
-    public function isSortable(): bool
-    {
-        return $this->sortable;
     }
 
     public function class(...$class): self
@@ -64,35 +55,6 @@ abstract class Column extends Component implements ColumnContract
         return $this;
     }
 
-    public function getClass($row): ?string
-    {
-        $classes = collect();
-
-        $classes->push($this->class);
-
-        $class = is_callable($this->styleCallback) ? call_user_func($this->styleCallback, $row) : null;
-
-        if (! is_string($class) && ! is_null($class)) {
-            throw new RuntimeException('Return value must be a string');
-        }
-
-        $classes->push($class);
-
-        if ($this->hasHighlight && ! is_null($this->getHighlight()) && ($this->getHighlight() === $this->getValue($row))) {
-            $classes->push('text-green-700 font-semibold');
-        }
-
-        return $classes
-            ->filter()
-            ->flatten()
-            ->implode(' ');
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
     public function width(?int $width): self
     {
         $this->width = $width;
@@ -100,21 +62,11 @@ abstract class Column extends Component implements ColumnContract
         return $this;
     }
 
-    public function getWidth(): ?int
-    {
-        return $this->width;
-    }
-
-    public function setHighlight(string $highlight): self
+    public function highlight(string $highlight): self
     {
         $this->highlight = $highlight;
 
         return $this;
-    }
-
-    private function getHighlight(): ?string
-    {
-        return $this->highlight;
     }
 
     public function displayUsing(callable $displayCallback): self
@@ -127,6 +79,13 @@ abstract class Column extends Component implements ColumnContract
     public function displayIf(callable $displayCondition): self
     {
         $this->displayCondition = $displayCondition;
+
+        return $this;
+    }
+
+    public function currentSort($sort): self
+    {
+        $this->currentSort = $sort;
 
         return $this;
     }
@@ -145,11 +104,79 @@ abstract class Column extends Component implements ColumnContract
         return $this;
     }
 
-    public function setCurrentSort($sort): self
+    public function getTitle(): ?string
     {
-        $this->currentSort = $sort;
+        return $this->title;
+    }
 
-        return $this;
+    public function isSortable(): bool
+    {
+        return $this->sortable;
+    }
+
+    public function getSortableField(): string
+    {
+        return $this->sortableField ?? $this->name;
+    }
+
+    public function getClass($row): ?string
+    {
+        return collect()
+            ->push($this->class)
+            ->when(
+                is_callable($this->styleCallback),
+                fn ($collection) => $collection->push(call_user_func($this->styleCallback, $row))
+            )
+            ->when(
+                $this->hasHighlight && !is_null($this->highlight),
+                fn (Collection $collection) => $collection->when(
+                    $this->hasDisplayCallback(),
+                    fn (Collection $collection) => $collection->when(
+                        $this->isHighlighting($this->display($row)),
+                        fn (Collection $collection) => $collection->push('text-green-500')
+                    ),
+                    fn (Collection $collection) => $collection->when(
+                        is_null($this->render()) && $this->isHighlighting($this->getValue($row)),
+                        fn (Collection $collection) => $collection->push('text-green-500')
+                    )
+                )
+            )
+            ->filter()
+            ->flatten()
+            ->unique()
+                ->implode(' ');
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getWidth(): ?int
+    {
+        return $this->width;
+    }
+
+    private function isHighlighting(string $value): bool
+    {
+        return $this->highlight === $value;
+    }
+
+    public function canDisplay($row): bool
+    {
+        return is_callable($this->displayCondition)
+            ? call_user_func($this->displayCondition, $row)
+            : true;
+    }
+
+    public function hasDisplayCallback(): bool
+    {
+        return is_callable($this->displayCallback);
+    }
+
+    public function display($row): string
+    {
+        return call_user_func($this->displayCallback, $row);
     }
 
     public function getSlotName(): string
@@ -170,12 +197,12 @@ abstract class Column extends Component implements ColumnContract
 
         return view('wiretables::partials.table-title')
             ->with([
-                'name' => $this->getName(),
+                'name' => $this->getSortableField(),
                 'title' => $this->getTitle(),
                 'isCurrentSort' => Str::of($this->currentSort)
                     ->replaceFirst('-', '')
-                    ->is($this->getName()),
-                'isSortUp' => $this->currentSort === $this->getName(),
+                    ->is($this->getSortableField()),
+                'isSortUp' => $this->currentSort === $this->getSortableField(),
                 'sort' => $this->currentSort,
             ])
             ->render();
@@ -183,20 +210,12 @@ abstract class Column extends Component implements ColumnContract
 
     public function renderIt($row):? string
     {
-        $condition = is_callable($this->displayCondition)
-            ? call_user_func($this->displayCondition, $row)
-            : true;
-
-        if ((bool) $condition === false) {
-            return null;
+        if ($this->hasDisplayCallback()) {
+            return $this->display($row);
         }
 
         if (is_null($this->render())) {
             return $this->getValue($row);
-        }
-
-        if (is_callable($this->displayCallback)) {
-            return call_user_func($this->displayCallback, $row);
         }
 
         return $this

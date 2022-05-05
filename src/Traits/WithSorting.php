@@ -41,7 +41,7 @@ trait WithSorting
     {
         return $this->columns()
                 ->filter(fn (ColumnContract $column) => $column->isSortable())
-                ->map(fn (ColumnContract $column) => $column->getName())
+                ->map(fn (ColumnContract $column) => $column->getSortableField())
                 ->values()
                 ->toArray() ?? [];
     }

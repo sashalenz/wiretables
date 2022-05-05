@@ -6,7 +6,7 @@ use Illuminate\Contracts\View\View;
 
 class TextColumn extends Column
 {
-    protected bool $hasHighlight = true;
+    public bool $hasHighlight = true;
 
     public function render(): ?View
     {

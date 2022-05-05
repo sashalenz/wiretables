@@ -5,6 +5,8 @@ namespace Sashalenz\Wiretables\Traits;
 trait WithSearching
 {
     public bool $disableSearch = false;
+    public bool $disableStrict = false;
+    public bool $strict = false;
     protected static string $searchKey = 'search';
 
     public function bootWithSearching(): void

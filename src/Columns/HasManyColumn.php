@@ -4,21 +4,21 @@ namespace Sashalenz\Wiretables\Columns;
 
 use Illuminate\Contracts\View\View;
 
-class BelongsToColumn extends Column
+class HasManyColumn extends Column
 {
-    private string|bool|null $icon = null;
     private ?string $route = null;
-
-    public function icon(string|bool $icon): self
-    {
-        $this->icon = $icon;
-
-        return $this;
-    }
+    private ?string $filterKey = null;
 
     public function route(string $route): self
     {
         $this->route = $route;
+
+        return $this;
+    }
+
+    public function filterKey(string $filterKey): self
+    {
+        $this->filterKey = $filterKey;
 
         return $this;
     }
@@ -34,10 +34,10 @@ class BelongsToColumn extends Column
 
     public function render(): View
     {
-        return view('wiretables::columns.belongs-to-column')
+        return view('wiretables::columns.has-many-column')
             ->with([
-                'icon' => $this->icon,
                 'route' => $this->route,
+                'filterKey' => $this->filterKey
             ]);
     }
 }
