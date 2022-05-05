@@ -24,7 +24,7 @@ class StackColumn extends Column
             'columns' => collect($this->columns)
                 ->filter(fn ($column) => $column instanceof ColumnContract)
                 ->when(
-                    !is_null($this->highlight),
+                    ! is_null($this->highlight),
                     fn (Collection $columns) => $columns->each(
                         fn (Column $column) => $column->hasHighlight && $column->highlight($this->highlight)
                     )

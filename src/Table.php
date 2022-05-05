@@ -67,7 +67,7 @@ abstract class Table extends Component implements TableContract
                 )
             )
             ->when(
-                method_exists($this, 'bootWithSorting') && !is_null($this->getSortProperty()),
+                method_exists($this, 'bootWithSorting') && ! is_null($this->getSortProperty()),
                 fn (Collection $rows) => $rows->each(
                     fn (Column $column) => $column->currentSort($this->getSortProperty())
                 )
@@ -77,7 +77,7 @@ abstract class Table extends Component implements TableContract
                 fn (Collection $rows) => $rows->push($actionColumn)
             )
             ->when(
-                method_exists($this, 'bootWithActions') && !is_null($checkboxColumn),
+                method_exists($this, 'bootWithActions') && ! is_null($checkboxColumn),
                 fn (Collection $rows) => $rows->prepend($checkboxColumn)
             );
     }
