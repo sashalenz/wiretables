@@ -40,7 +40,7 @@ abstract class Filter extends AllowedFilter implements FilterContract
         return $this;
     }
 
-    public function getValue(?string $value = null):? string
+    public function getValue(?string $value = null): ?string
     {
         $newValue = method_exists($this, 'castValue')
             ? $this->castValue($value)

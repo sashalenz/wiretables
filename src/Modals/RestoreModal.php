@@ -33,7 +33,7 @@ class RestoreModal extends ModalComponent
         $this->model->restore();
 
         $this->closeModalWithEvents([
-            '$refresh'
+            '$refresh',
         ]);
     }
 

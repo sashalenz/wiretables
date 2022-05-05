@@ -17,7 +17,7 @@ trait WithSearching
     public function queryStringWithSearching(): array
     {
         return [
-            self::$searchKey => ['except' => '']
+            self::$searchKey => ['except' => ''],
         ];
     }
 

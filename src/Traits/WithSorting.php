@@ -16,7 +16,7 @@ trait WithSorting
     public function queryStringWithSorting(): array
     {
         return [
-            self::$sortKey => ['except' => $this->getDefaultSort()]
+            self::$sortKey => ['except' => $this->getDefaultSort()],
         ];
     }
 

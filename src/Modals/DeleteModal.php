@@ -31,7 +31,7 @@ class DeleteModal extends ModalComponent
         $this->model->delete();
 
         $this->closeModalWithEvents([
-            '$refresh'
+            '$refresh',
         ]);
     }
 

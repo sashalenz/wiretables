@@ -47,7 +47,7 @@ abstract class Table extends Component implements TableContract
 
     public function getRequest(): QueryBuilderRequest
     {
-        if (!$this->request) {
+        if (! $this->request) {
             $this->request = app(QueryBuilderRequest::class);
         }
 
@@ -73,7 +73,7 @@ abstract class Table extends Component implements TableContract
                 )
             )
             ->when(
-                method_exists($this, 'bootWithButtons') && !is_null($actionColumn),
+                method_exists($this, 'bootWithButtons') && ! is_null($actionColumn),
                 fn (Collection $rows) => $rows->push($actionColumn)
             )
             ->when(

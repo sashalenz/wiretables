@@ -189,7 +189,7 @@ abstract class Column extends Component implements ColumnContract
         return data_get($row->toArray(), $this->getName());
     }
 
-    public function renderTitle():? string
+    public function renderTitle(): ?string
     {
         if (is_null($this->currentSort) && ! $this->isSortable()) {
             return $this->getTitle();
@@ -208,7 +208,7 @@ abstract class Column extends Component implements ColumnContract
             ->render();
     }
 
-    public function renderIt($row):? string
+    public function renderIt($row): ?string
     {
         if ($this->hasDisplayCallback()) {
             return $this->display($row);
