@@ -7,12 +7,15 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\View\Component;
+use Sashalenz\Wireforms\Traits\Authorizable;
 use Sashalenz\Wiretables\Contracts\ColumnContract;
 
 abstract class Column extends Component implements ColumnContract
 {
+    use Authorizable;
+
     private string $name;
-    private Collection $class;
+    private array $class = [];
     private ?string $title = null;
     private bool $sortable = false;
     private ?string $sortableField = null;
@@ -24,11 +27,11 @@ abstract class Column extends Component implements ColumnContract
     protected ?string $currentSort = null;
     protected ?string $highlight = null;
     public bool $hasHighlight = false;
+    public bool $canRender = true;
 
     public function __construct($name)
     {
         $this->name = $name;
-        $this->class = collect();
     }
 
     abstract public function render(): ?View;
@@ -48,9 +51,9 @@ abstract class Column extends Component implements ColumnContract
         return $this;
     }
 
-    public function class(...$class): self
+    public function class(string $class): self
     {
-        $this->class->push($class);
+        $this->class[] = $class;
 
         return $this;
     }
@@ -99,7 +102,14 @@ abstract class Column extends Component implements ColumnContract
 
     public function toCenter(): self
     {
-        $this->class->push('text-center');
+        $this->class[] = 'text-center';
+
+        return $this;
+    }
+
+    public function canSee(string $ability, string $model): self
+    {
+        $this->canRender = $this->authorizeModel($ability, $model);
 
         return $this;
     }
@@ -144,7 +154,7 @@ abstract class Column extends Component implements ColumnContract
             ->filter()
             ->flatten()
             ->unique()
-                ->implode(' ');
+            ->implode(' ');
     }
 
     public function getName(): string
@@ -159,7 +169,11 @@ abstract class Column extends Component implements ColumnContract
 
     private function isHighlighting(string $value): bool
     {
-        return $this->highlight === $value;
+        return Str::of($value)
+            ->lower()
+            ->contains(
+                Str::of($this->highlight)->lower()
+            );
     }
 
     public function canDisplay($row): bool
@@ -191,7 +205,7 @@ abstract class Column extends Component implements ColumnContract
 
     public function renderTitle(): ?string
     {
-        if (is_null($this->currentSort) && ! $this->isSortable()) {
+        if (is_null($this->currentSort) || !$this->isSortable()) {
             return $this->getTitle();
         }
 

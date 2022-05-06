@@ -25,7 +25,7 @@ trait WithButtons
 //
     }
 
-    protected function can(string $ability, Model $model): bool
+    protected function can(string $ability, Model|string $model): bool
     {
         try {
             $this->authorize($ability, $model);

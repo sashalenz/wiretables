@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'id' => 'ID',
     'search' => 'Search',
     'table_is_empty' => 'Table is empty :(',
     'total' => 'Showing :from to :to from :total',

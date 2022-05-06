@@ -2,12 +2,14 @@
 
 namespace Sashalenz\Wiretables;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 use Sashalenz\Searchable\Filters\SearchFilter;
 use Sashalenz\Wiretables\Columns\Column;
+use Sashalenz\Wiretables\Contracts\ColumnContract;
 use Sashalenz\Wiretables\Contracts\TableContract;
 use Sashalenz\Wiretables\Traits\WithActions;
 use Sashalenz\Wiretables\Traits\WithButtons;
@@ -60,6 +62,8 @@ abstract class Table extends Component implements TableContract
         $checkboxColumn = $this->getCheckboxColumn();
 
         return $this->columns()
+            ->filter(fn ($column) => $column instanceof ColumnContract)
+            ->filter(fn ($column) => $column->canRender)
             ->when(
                 method_exists($this, 'bootWithSearching') && $this->getSearchProperty(),
                 fn (Collection $rows) => $rows->each(
@@ -110,7 +114,7 @@ abstract class Table extends Component implements TableContract
             );
     }
 
-    public function render()
+    public function render(): View
     {
         return view('wiretables::table')
             ->extends(

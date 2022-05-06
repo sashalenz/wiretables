@@ -23,6 +23,7 @@ class StackColumn extends Column
         return view('wiretables::columns.stack-column', [
             'columns' => collect($this->columns)
                 ->filter(fn ($column) => $column instanceof ColumnContract)
+                ->filter(fn ($column) => $column->canRender)
                 ->when(
                     !is_null($this->highlight),
                     fn (Collection $columns) => $columns->each(
