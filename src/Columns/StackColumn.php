@@ -25,7 +25,7 @@ class StackColumn extends Column
                 ->filter(fn ($column) => $column instanceof ColumnContract)
                 ->filter(fn ($column) => $column->canRender)
                 ->when(
-                    !is_null($this->highlight),
+                    ! is_null($this->highlight),
                     fn (Collection $columns) => $columns->each(
                         fn (Column $column) => $column->hasHighlight && $column->highlight($this->highlight)
                     )

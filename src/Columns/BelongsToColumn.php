@@ -25,7 +25,7 @@ class BelongsToColumn extends Column
 
     public function canDisplay($row): bool
     {
-        if (!$row->{$this->getName()}) {
+        if (! $row->{$this->getName()}) {
             return false;
         }
 

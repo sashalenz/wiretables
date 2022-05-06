@@ -138,7 +138,7 @@ abstract class Column extends Component implements ColumnContract
                 fn ($collection) => $collection->push(call_user_func($this->styleCallback, $row))
             )
             ->when(
-                $this->hasHighlight && !is_null($this->highlight),
+                $this->hasHighlight && ! is_null($this->highlight),
                 fn (Collection $collection) => $collection->when(
                     $this->hasDisplayCallback(),
                     fn (Collection $collection) => $collection->when(

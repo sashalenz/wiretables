@@ -25,7 +25,7 @@ class HasManyColumn extends Column
 
     public function canDisplay($row): bool
     {
-        if (!$row->{$this->getName()}) {
+        if (! $row->{$this->getName()}) {
             return false;
         }
 
@@ -37,7 +37,7 @@ class HasManyColumn extends Column
         return view('wiretables::columns.has-many-column')
             ->with([
                 'route' => $this->route,
-                'filterKey' => $this->filterKey
+                'filterKey' => $this->filterKey,
             ]);
     }
 }
