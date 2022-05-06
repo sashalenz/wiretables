@@ -205,7 +205,7 @@ abstract class Column extends Component implements ColumnContract
 
     public function renderTitle(): ?string
     {
-        if (is_null($this->currentSort) || !$this->isSortable()) {
+        if (is_null($this->currentSort) || ! $this->isSortable()) {
             return $this->getTitle();
         }
 
