@@ -8,9 +8,10 @@ class CheckboxColumn extends Column
 {
     protected ?int $width = 2;
 
-    public function renderTitle(): View
+    public function renderTitle():? string
     {
-        return view('wiretables::partials.checkbox-title');
+        return view('wiretables::partials.checkbox-title')
+            ->render();
     }
 
     public function render(): ?View

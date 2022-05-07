@@ -117,9 +117,9 @@
         </div>
     </div>
 
-    <div class="overflow-x-auto w-full">
-        <div class="align-middle inline-block w-full border overflow-hidden border-gray-200 rounded-sm">
-            <table class="w-full"
+    <div>
+        <div class="overflow-x-auto align-middle inline-block w-full">
+            <table class="w-full overflow-x-scroll border border-gray-200 rounded-sm"
                    x-data="{ moving: false }"
             >
                 <thead>
@@ -182,6 +182,8 @@
                 @endforelse
                 </tbody>
             </table>
+        </div>
+        <div class="w-full overflow-x-auto">
             {{ $this->data->links() }}
         </div>
     </div>
