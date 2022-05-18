@@ -29,7 +29,7 @@ abstract class Table extends Component implements TableContract
     use WithButtons;
     use WithActions;
 
-    protected Model $model;
+    public ?Model $model = null;
     public ?string $layout = null;
     protected $request;
 
@@ -37,6 +37,7 @@ abstract class Table extends Component implements TableContract
         '$refresh',
         'resetTable',
         'addFilter',
+        'addFilterOutside'
     ];
 
     public function resetTable(): void
@@ -65,15 +66,21 @@ abstract class Table extends Component implements TableContract
             ->filter(fn ($column) => $column instanceof ColumnContract)
             ->filter(fn ($column) => $column->canRender)
             ->when(
-                method_exists($this, 'bootWithSearching') && $this->getSearchProperty(),
+                method_exists($this, 'bootWithSearching') && $this->search,
                 fn (Collection $rows) => $rows->each(
-                    fn (Column $column) => $column->highlight($this->getSearchProperty())
+                    fn (Column $column) => $column->highlight($this->search)
                 )
             )
             ->when(
-                method_exists($this, 'bootWithSorting') && ! is_null($this->getSortProperty()),
+                !method_exists($this, 'mountWithFiltering'),
                 fn (Collection $rows) => $rows->each(
-                    fn (Column $column) => $column->currentSort($this->getSortProperty())
+                    fn (Column $column) => $column->notFilterable()
+                )
+            )
+            ->when(
+                method_exists($this, 'mountWithSorting'),
+                fn (Collection $rows) => $rows->each(
+                    fn (Column $column) => $column->currentSort($this->sort)
                 )
             )
             ->when(
@@ -90,22 +97,24 @@ abstract class Table extends Component implements TableContract
     {
         $builder = QueryBuilder::for($this->query(), $this->getRequest());
 
-        if (method_exists($this, 'bootWithFiltering')) {
+        if (method_exists($this, 'mountWithFiltering')) {
             $builder = $builder->allowedFilters(
-                $this->getFiltersProperty()->toArray()
+                $this->allowedFilters->toArray()
             );
         }
 
-        if (method_exists($this, 'bootWithSorting')) {
+        if (method_exists($this, 'mountWithSorting')) {
             $builder = $builder
                 ->defaultSort($this->getDefaultSort())
-                ->allowedSorts(...$this->getAllowedSorts());
+                ->allowedSorts(
+                    $this->allowedSorts->toArray()
+                );
         }
 
         return $builder
             ->when(
-                method_exists($this, 'bootWithSearching') && ! $this->disableSearch && $this->getSearchProperty(),
-                new SearchFilter($this->getSearchProperty(), $this->strict)
+                method_exists($this, 'bootWithSearching') && ! $this->disableSearch && $this->search,
+                new SearchFilter($this->search, $this->strict)
             )
             ->when(
                 $this->simplePagination === true,

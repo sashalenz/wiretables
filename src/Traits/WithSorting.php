@@ -2,21 +2,31 @@
 
 namespace Sashalenz\Wiretables\Traits;
 
+use Illuminate\Support\Collection;
 use Sashalenz\Wiretables\Contracts\ColumnContract;
 
 trait WithSorting
 {
+    public string $sort = '-id';
     protected static string $sortKey = 'sort';
 
-    public function bootWithSorting(): void
+    public function hydrateWithSorting(): void
     {
-        $this->setSort($this->resolveSort());
+        $this->setSort($this->sort);
+    }
+
+    public function mountWithSorting(): void
+    {
+        $this->setSort($this->sort);
     }
 
     public function queryStringWithSorting(): array
     {
         return [
-            self::$sortKey => ['except' => $this->getDefaultSort()],
+            'sort' => [
+                'except' => $this->getDefaultSort(),
+                'as' => self::$sortKey
+            ],
         ];
     }
 
@@ -25,31 +35,25 @@ trait WithSorting
         $this->setSort($this->getDefaultSort());
     }
 
-    private function resolveSort(): ?string
-    {
-        return $this->getRequest()->query(self::$sortKey, $this->getDefaultSort());
-    }
-
     private function setSort($sort): void
     {
-        $this->{self::$sortKey} = (string) $sort;
+        $this->sort = (string) $sort;
 
         $this->getRequest()->query->set(self::$sortKey, (string) $sort);
     }
 
-    private function getAllowedSorts(): array
+    public function getAllowedSortsProperty(): Collection
     {
         return $this->columns()
                 ->filter(fn (ColumnContract $column) => $column->isSortable())
                 ->map(fn (ColumnContract $column) => $column->getSortableField())
-                ->values()
-                ->toArray() ?? [];
+                ->values();
     }
 
     public function sortBy($columnName): void
     {
         $this->setSort(
-            ($this->getSortProperty() !== $columnName)
+            ($this->sort !== $columnName)
                 ? $columnName
                 : sprintf('-%s', $columnName)
         );
@@ -64,10 +68,5 @@ trait WithSorting
         return property_exists($this, 'defaultSort')
             ? $this->defaultSort
             : sprintf('-%s', $this->columns()->first()->getName());
-    }
-
-    public function getSortProperty(): string
-    {
-        return $this->{self::$sortKey};
     }
 }

@@ -6,15 +6,16 @@ use Illuminate\Pagination\Paginator;
 
 trait WithPagination
 {
+    public int $page = 1;
     public int $perPage = 20;
     public bool $simplePagination = false;
     protected static string $pageKey = 'page';
 
     public function bootWithPagination(): void
     {
-        $this->setPage($this->resolvePage());
+        $this->setPage($this->page);
 
-        Paginator::currentPageResolver(fn () => $this->{self::$pageKey});
+        Paginator::currentPageResolver(fn () => $this->page);
 
         Paginator::defaultView($this->paginationView());
         Paginator::defaultSimpleView($this->simplePaginationView());
@@ -23,7 +24,10 @@ trait WithPagination
     public function queryStringWithPagination(): array
     {
         return [
-            self::$pageKey => ['except' => 1],
+            'page' => [
+                'except' => 1,
+                'as' => self::$pageKey
+            ],
         ];
     }
 
@@ -42,14 +46,9 @@ trait WithPagination
         $this->setPage(1);
     }
 
-    private function resolvePage()
-    {
-        return $this->getRequest()->query(self::$pageKey, 1);
-    }
-
     private function setPage($page): void
     {
-        $this->{self::$pageKey} = (int) $page;
+        $this->page = (int) $page;
     }
 
     public function gotoPage($page): void
@@ -59,15 +58,15 @@ trait WithPagination
 
     public function previousPage(): void
     {
-        if ($this->{self::$pageKey} === 1) {
+        if ($this->page === 1) {
             return;
         }
 
-        $this->setPage(--$this->{self::$pageKey});
+        $this->setPage(--$this->page);
     }
 
     public function nextPage(): void
     {
-        $this->setPage(++$this->{self::$pageKey});
+        $this->setPage(++$this->page);
     }
 }

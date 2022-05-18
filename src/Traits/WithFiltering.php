@@ -3,50 +3,61 @@
 namespace Sashalenz\Wiretables\Traits;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Sashalenz\Wiretables\Contracts\FilterContract;
 
 use Sashalenz\Wiretables\Filters\TrashedFilter;
 
 trait WithFiltering
 {
+    public string $filter = '';
     private Collection $filters;
     protected static string $filterKey = 'filter';
 
-    public function bootWithFiltering(): void
+    public function hydrateWithFiltering(): void
     {
-        $queryFilters = $this->resolveFilter();
+        $this->resolveFilters();
+        $this->updateFilters();
+    }
 
-        $this->filters = ($queryFilters)
-            ? $this->expandFilters($queryFilters)
-            : collect();
-
+    public function mountWithFiltering(): void
+    {
+        $this->resolveFilters();
         $this->updateFilters();
     }
 
     public function queryStringWithFiltering(): array
     {
         return [
-            self::$filterKey => ['except' => ''],
+            'filter' => [
+                'except' => '',
+                'as' => self::$filterKey
+            ],
         ];
     }
 
-    private function resolveFilter()
+    private function resolveFilters(): void
     {
-        return $this->getRequest()->query(self::$filterKey, '');
+        $this->filters = $this->expandFilters();
     }
 
     private function updateFilters(): void
     {
-        $this->{self::$filterKey} = $this->shrinkFilters($this->filters);
+        $this->filter = $this->shrinkFilters();
 
-        $this->getRequest()->query->set('filter', $this->filters->toArray());
+        $this->getRequest()->query->set(self::$filterKey, $this->filters->toArray());
     }
 
-    private function expandFilters($filters): Collection
+    private function expandFilters(): Collection
     {
-        return collect(explode(';', $filters))
+        if (!$this->filter) {
+            return collect();
+        }
+
+        return Str::of($this->filter)
+            ->explode(';')
             ->mapWithKeys(static function ($filter) {
-                if (! str_contains($filter, ':')) {
+                if (!str_contains($filter, ':')) {
                     return [$filter => true];
                 }
 
@@ -56,16 +67,16 @@ trait WithFiltering
             });
     }
 
-    private function shrinkFilters(Collection $filters): string
+    private function shrinkFilters(): string
     {
-        return $filters
-            ->map(fn ($filter, $key) => implode(':', [$key, $filter]))
+        return $this->filters
+            ->map(fn($filter, $key) => implode(':', [$key, $filter]))
             ->implode(';');
     }
 
-    private function getTrashedFilter(): ?TrashedFilter
+    private function getTrashedFilter():? TrashedFilter
     {
-        if (! method_exists($this->model, 'bootSoftDeletes')) {
+        if (!method_exists($this->model, 'bootSoftDeletes')) {
             return null;
         }
 
@@ -81,21 +92,43 @@ trait WithFiltering
 
     protected function resetFilter(): void
     {
+        $this->allowedFilters
+            ->filter(fn (FilterContract $filter) => $filter->isFillable() && $filter->hasValue())
+            ->each(fn (FilterContract $filter) => $this->dispatchBrowserEvent('update-' . $filter->getKebabName(), ['value' => null]));
+
         $this->filters = collect();
 
         $this->updateFilters();
     }
 
+    public function addFilterOutside($key, $value): void
+    {
+        $filter = $this->filtersWithTrashed()
+            ->first(fn (FilterContract $row) => $row->getName() === $key);
+
+        if (!$filter) {
+            return;
+        }
+
+        $this->addFilter($key, $value);
+        $this->dispatchBrowserEvent('update-' . $filter->getKebabName(), ['value' => $value]);
+    }
+
     public function addFilter($key, $value): void
     {
-        $filter = $this->getFiltersProperty()
+        $filter = $this->filtersWithTrashed()
             ->first(fn (FilterContract $row) => $row->getName() === $key);
+
+        if (!$filter) {
+            return;
+        }
 
         $castedValue = $filter->getValue($value);
 
-        $this->filters->put($filter->getName(), $castedValue);
-
-        $this->filters = $this->filters->filter();
+        $this->filters = $this->filters
+            ->put($filter->getName(), $castedValue)
+            ->filter()
+            ->unique();
 
         $this->updateFilters();
 
@@ -104,7 +137,7 @@ trait WithFiltering
         }
     }
 
-    public function getFiltersProperty(): Collection
+    private function filtersWithTrashed(): Collection
     {
         $trashedFilter = $this->getTrashedFilter();
 
@@ -112,16 +145,17 @@ trait WithFiltering
             ->when(
                 ! is_null($trashedFilter),
                 fn (Collection $rows) => $rows->push($trashedFilter)
-            )
-            ->each(
-                fn (FilterContract $filter) => $filter->value(
-                    $this->filters->get($filter->getName())
-                )
             );
     }
 
-    public function getFilterProperty(): string
+    public function getAllowedFiltersProperty(): Collection
     {
-        return $this->{self::$filterKey};
+        return $this->filtersWithTrashed()
+            ->each(
+                fn (FilterContract $filter) => $filter
+                    ->value(
+                        $this->filters->get($filter->getName())
+                    )
+            );
     }
 }

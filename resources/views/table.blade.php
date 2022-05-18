@@ -1,23 +1,14 @@
-@if($this->createButton)
+@if($this->globalButtons)
     @section('buttons')
-        <button
-            type="button"
-            class="inline-flex space-x-1 items-center text-sm leading-5 text-primary-500 hover:text-primary-700 focus:outline-none active:text-primary-700 transition duration-150 ease-in-out"
-            onclick="Livewire.emit('openModal', '{{ $this->createButton }}')"
-        >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-            </svg>
-            <span class="hidden md:inline-block">
-                @lang('wiretables::table.add')
-            </span>
-        </button>
+        @foreach($this->globalButtons as $button)
+            {!! $button->renderIt() !!}
+        @endforeach
     @endsection
 @endif
 
 <div class="flex flex-col space-y-3 py-2 sm:px-4">
     <div
-        x-data="{ filtersCount: {{ $this->filters->count() }}, filtersAreShown: false }"
+        x-data="{ filtersCount: {{ $this->allowedFilters->count() }}, filtersAreShown: false }"
         x-init="filtersAreShown = {{ $this->filter ? 'true' : 'false' }}"
     >
         <div class="py-2 flex justify-between items-center">
@@ -63,7 +54,7 @@
                 </a>
                 <a href="javascript:{}"
                    class="p-2 text-gray-400 rounded-full group hover:text-gray-500 focus:outline-none focus:text-gray-500 focus:bg-gray-200 transition ease-in-out duration-150"
-                   wire:click.prevent="resetTable"
+                   @click.prevent="$wire.call('resetTable')"
                 >
                     <svg class="w-5 h-5 group-hover:text-gray-500 group-focus:text-gray-500" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
                         <path d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path>
@@ -83,7 +74,7 @@
         </div>
 
         <div
-            class="flex justify-between bg-white border border-gray-200 px-4 py-2 whitespace-nowrap text-gray-700 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6 align-center items-center rounded-sm"
+            class="flex justify-between bg-white border border-gray-200 px-4 py-2 whitespace-nowrap text-gray-700 grid grid-cols-1 gap-4 sm:grid-cols-6 align-center items-center rounded-sm"
             x-show="filtersCount && filtersAreShown"
             x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 scale-90"
@@ -93,8 +84,15 @@
             x-transition:leave-end="opacity-0 scale-90"
             x-cloak
         >
-            @foreach($this->filters as $filter)
-                {!! $filter->render() !!}
+            @foreach($this->allowedFilters as $filter)
+                <div
+                    class="col-span-1"
+                    @if($filter->isFillable())
+                        @update-{{ $filter->getKebabName() }}.window="event => { $el.querySelectorAll('div[wire\\:id]').forEach((el) => window.Livewire.find(el.getAttribute('wire:id')).emitSelf('fillParent', event.detail.value)) }"
+                    @endif
+                >
+                    {!! $filter->render() !!}
+                </div>
             @endforeach
         </div>
 
@@ -123,7 +121,7 @@
                    x-data="{ moving: false }"
             >
                 <thead>
-                <tr>
+                <tr class="odd:bg-gray-50">
                     @foreach($this->columns as $column)
                         <th class="p-2 md:px-4 md:py-3 xl:px-6 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider" @if($column->getWidth())style="width: {{ $column->getWidth() }}%;"@endif>
                             {!! $column->renderTitle() !!}

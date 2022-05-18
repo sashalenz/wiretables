@@ -1,4 +1,4 @@
-<div class="relative flex flex-col space-y-0.5">
+<div class="relative flex flex-col">
     @foreach($columns as $column)
         @if($column->canDisplay($row))
             <div @class([$column->getClass($row)])>

@@ -6,8 +6,8 @@ use Illuminate\Contracts\View\View;
 
 class BelongsToColumn extends Column
 {
-    private string|bool|null $icon = null;
-    private ?string $route = null;
+    protected string|bool|null $icon = null;
+    protected ?string $route = null;
 
     public function icon(string|bool $icon): self
     {

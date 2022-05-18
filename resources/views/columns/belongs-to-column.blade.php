@@ -1,19 +1,39 @@
-@if(method_exists($data, 'getRoute') && $data->hasRoute('show'))
-    <a href="{{ route($data->getRoute('show'), $data) }}" class="group inline-flex items-center space-x-1 truncate text-sm leading-5">
-        @if($icon !== false)
-            @svg($icon ?? 'heroicon-o-link', 'flex-shrink-0 h-4 w-4 text-gray-300 group-hover:text-gray-500 transition ease-in-out duration-150')
-        @endif
-        <p class="text-cool-gray-600 truncate group-hover:text-cool-gray-900 transition ease-in-out duration-150">
-            {{ method_exists($data, 'getDisplayName') ? $data->getDisplayName() : $data->id }}
-        </p>
-    </a>
-@else
-    <span class="group inline-flex items-center space-x-1 truncate text-sm leading-5">
-        @if($icon !== false)
-            @svg($icon ?? 'heroicon-o-link', 'flex-shrink-0 h-4 w-4 text-gray-300')
-        @endif
-        <p class="text-cool-gray-500 truncate">
-            {{ method_exists($data, 'getDisplayName') ? $data->getDisplayName() : $data->id }}
-        </p>
-    </span>
-@endif
+<div class="flex items-center justify-start">
+    @if($route)
+        <a
+            class="group inline-flex items-center space-x-1 truncate text-sm leading-5"
+            href="{{ route($route, $data) }}"
+            target="_blank"
+        >
+            @if($icon !== false)
+                <span @if($filter)class="cursor-pointer" @click.prevent="$wire.addFilterOutside('{{ $filter }}', {{ is_object($data) ? $data->id : $data }})" @endif>
+                    @svg($icon ?? 'heroicon-o-link', 'flex-shrink-0 h-4 w-4 text-gray-300 transition ease-in-out duration-150')
+                </span>
+            @endif
+            <p class="font-medium truncate transition ease-in-out duration-150">
+                @if(is_object($data))
+                    {{ method_exists($data, 'getDisplayName') ? $data->getDisplayName() : $data->id }}
+                @else
+                    {{ $data }}
+                @endif
+            </p>
+        </a>
+    @else
+        <span
+            class="inline-flex items-center space-x-1 truncate text-sm leading-5"
+        >
+            @if($icon !== false)
+                <span @if($filter)class="cursor-pointer" @click.prevent="$wire.addFilterOutside('{{ $filter }}', {{ is_object($data) ? $data->id : $data }})" @endif>
+                     @svg($icon ?? 'heroicon-o-link', 'flex-shrink-0 h-4 w-4 text-gray-300')
+                </span>
+            @endif
+            <p class="font-medium truncate">
+                @if(is_object($data))
+                    {{ method_exists($data, 'getDisplayName') ? $data->getDisplayName() : $data->id }}
+                @else
+                    {{ $data }}
+                @endif
+            </p>
+        </span>
+    @endif
+</div>

@@ -4,6 +4,7 @@ namespace Sashalenz\Wiretables\Traits;
 
 trait WithSearching
 {
+    public string $search = '';
     public bool $disableSearch = false;
     public bool $disableStrict = false;
     public bool $strict = false;
@@ -11,13 +12,16 @@ trait WithSearching
 
     public function bootWithSearching(): void
     {
-        $this->setSearch($this->resolveSearch());
+
     }
 
     public function queryStringWithSearching(): array
     {
         return [
-            self::$searchKey => ['except' => ''],
+            'search' => [
+                'except' => '',
+                'as' => self::$searchKey
+            ],
         ];
     }
 
@@ -26,14 +30,9 @@ trait WithSearching
         $this->setSearch('');
     }
 
-    private function resolveSearch()
-    {
-        return $this->getRequest()->query(self::$searchKey, '');
-    }
-
     private function setSearch($search): void
     {
-        $this->{self::$searchKey} = (string) $search;
+        $this->search = (string) $search;
     }
 
     public function searchBy($search): void
@@ -43,10 +42,5 @@ trait WithSearching
         if (method_exists($this, 'resetPage')) {
             $this->resetPage();
         }
-    }
-
-    public function getSearchProperty(): string
-    {
-        return $this->{self::$searchKey};
     }
 }

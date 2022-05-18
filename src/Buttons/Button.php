@@ -15,6 +15,7 @@ abstract class Button extends Component implements ButtonContract
     protected ?string $icon = null;
 
     protected array $classes = [];
+    protected bool $global = false;
 
     protected ?Closure $styleCallback = null;
     protected ?Closure $displayCondition = null;
@@ -36,6 +37,13 @@ abstract class Button extends Component implements ButtonContract
     public function icon(string $icon): self
     {
         $this->icon = $icon;
+
+        return $this;
+    }
+
+    public function global(): self
+    {
+        $this->global = true;
 
         return $this;
     }
@@ -93,12 +101,12 @@ abstract class Button extends Component implements ButtonContract
         return $this->name;
     }
 
-    protected function getClass($row): ?string
+    protected function getClass($row = null): ?string
     {
         return collect($this->classes)
             ->when(
                 is_callable($this->styleCallback) && ! is_null($row),
-                fn ($class) => $class->push((string)call_user_func($this->styleCallback, $row))
+                fn ($class) => $class->push((string) call_user_func($this->styleCallback, $row))
             )
             ->filter()
             ->flatten()
@@ -106,7 +114,7 @@ abstract class Button extends Component implements ButtonContract
             ->implode(' ');
     }
 
-    protected function canDisplay($row): bool
+    protected function canDisplay($row = null): bool
     {
         return is_callable($this->displayCondition)
             ? call_user_func($this->displayCondition, $row)
@@ -118,18 +126,23 @@ abstract class Button extends Component implements ButtonContract
         return is_callable($this->routeCallback);
     }
 
-    protected function getRoute($row)
+    protected function getRoute($row = null)
     {
         return $this->hasRouteCallback()
             ? call_user_func($this->routeCallback, $row)
             : null;
     }
 
-    protected function getRouteParams($row)
+    protected function getRouteParams($row = null)
     {
         return is_callable($this->routeParams)
             ? call_user_func($this->routeParams, $row)
             : null;
+    }
+
+    protected function isGlobal(): bool
+    {
+        return $this->global;
     }
 
     public static function make(string $name): static
@@ -137,7 +150,7 @@ abstract class Button extends Component implements ButtonContract
         return new static($name);
     }
 
-    public function renderIt($row): ?View
+    public function renderIt($row = null): ?View
     {
         if (! $this->canDisplay($row)) {
             return null;

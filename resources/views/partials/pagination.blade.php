@@ -1,14 +1,14 @@
-<div class="bg-white px-4 py-3 flex items-center justify-between sm:px-6">
+<div class="bg-white px-4 py-3 flex border border-t-0 border-gray-200  items-center justify-between sm:px-6">
     <div class="hidden sm:block">
         <p class="text-sm leading-5 text-gray-700">
             @lang('wiretables::table.total', ['from' => $paginator->firstItem() ?? 0, 'to' => $paginator->lastItem() ?? 0, 'total' => $paginator->total()])
         </p>
     </div>
     @if ($paginator->hasPages())
-        <nav role="navigation" aria-label="Pagination Navigation" class="relative z-0 inline-flex shadow-sm">
+        <nav role="navigation" aria-label="Pagination Navigation" class="relative z-0 inline-flex">
             {{-- Previous Page Link --}}
             @if ($paginator->onFirstPage())
-                <span class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 text-sm leading-5 font-medium text-gray-500 bg-gray-100 cursor-not-allowed"
+                <span class="relative inline-flex items-center px-2 py-2 rounded-l-sm border border-gray-300 text-sm leading-5 font-medium text-gray-500 bg-gray-100 cursor-not-allowed"
                       aria-hidden="true"
                       aria-label="@lang('wiretables::table.previous')"
                 >
@@ -19,7 +19,7 @@
             @else
                 <button wire:click="previousPage"
                         rel="prev"
-                        class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:outline-none focus:ring-primary-500 focus:border-primary-500 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150"
+                        class="relative inline-flex items-center px-2 py-2 rounded-l-sm border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:outline-none focus:ring-primary-500 focus:border-primary-500 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150"
                         aria-label="@lang('wiretables::table.previous')"
                 >
                     <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -32,16 +32,21 @@
             @foreach ($elements as $element)
                 {{-- "Three Dots" Separator --}}
                 @if (is_string($element))
-                    <span class="-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-700">{{ $element }}</span>
+                    <span class="-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-700" wire:key="{{ $element }}">{{ $element }}</span>
                 @endif
 
                 {{-- Array Of Links --}}
                 @if (is_array($element))
                     @foreach ($element as $page => $url)
                         @if ($page === $paginator->currentPage())
-                            <span class="-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 bg-gray-100 text-sm leading-5 font-medium text-gray-700 cursor-not-allowed">{{ $page }}</span>
+                            <span class="-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 bg-gray-100 text-sm leading-5 font-medium text-gray-700 cursor-not-allowed"
+                                  wire:key="{{ $page }}"
+                            >
+                                {{ $page }}
+                            </span>
                         @else
                             <button wire:click="gotoPage({{ $page }})"
+                                    wire:key="{{ $page }}"
                                     class="-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-700 hover:text-gray-500 focus:z-10 focus:outline-none focus:outline-none focus:ring-primary-500 focus:border-primary-500 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
                                     aria-label="@lang('wiretables::table.goto_page', ['page' => $page])"
                             >
@@ -56,7 +61,7 @@
             @if ($paginator->hasMorePages())
                 <button wire:click="previousPage"
                         rel="prev"
-                        class="-ml-px relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:ring-primary-500 focus:border-primary-500 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150"
+                        class="-ml-px relative inline-flex items-center px-2 py-2 rounded-r-sm border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:ring-primary-500 focus:border-primary-500 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150"
                         aria-label="@lang('wiretables::table.next')"
                 >
                     <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -64,7 +69,7 @@
                     </svg>
                 </button>
             @else
-                <span class="-ml-px relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 text-sm leading-5 font-medium text-gray-500 bg-gray-100 cursor-not-allowed"
+                <span class="-ml-px relative inline-flex items-center px-2 py-2 rounded-r-sm border border-gray-300 text-sm leading-5 font-medium text-gray-500 bg-gray-100 cursor-not-allowed"
                       aria-hidden="true"
                       aria-label="@lang('wiretables::table.next')"
                 >

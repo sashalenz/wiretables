@@ -14,15 +14,20 @@ abstract class Column extends Component implements ColumnContract
 {
     use Authorizable;
 
-    private string $name;
-    private array $class = [];
-    private ?string $title = null;
-    private bool $sortable = false;
-    private ?string $sortableField = null;
-    private ?int $width = null;
-    private ?Closure $styleCallback = null;
-    private ?Closure $displayCallback = null;
-    private ?Closure $displayCondition = null;
+    protected string $name;
+    protected array $class = [];
+    protected ?string $title = null;
+    protected ?int $width = null;
+
+    protected bool $sortable = false;
+    protected ?string $sortableField = null;
+
+    protected bool $filterable = false;
+    protected ?string $filterableField = null;
+
+    protected ?Closure $styleCallback = null;
+    protected ?Closure $displayCallback = null;
+    protected ?Closure $displayCondition = null;
 
     protected ?string $currentSort = null;
     protected ?string $highlight = null;
@@ -50,6 +55,23 @@ abstract class Column extends Component implements ColumnContract
 
         return $this;
     }
+
+    public function filterable(?string $field = null): self
+    {
+        $this->filterable = true;
+        $this->filterableField = $field;
+
+        return $this;
+    }
+
+    public function notFilterable(): self
+    {
+        $this->filterable = false;
+        $this->filterableField = null;
+
+        return $this;
+    }
+
 
     public function class(string $class): self
     {
@@ -129,6 +151,15 @@ abstract class Column extends Component implements ColumnContract
         return $this->sortableField ?? $this->name;
     }
 
+    public function getFilterableField():? string
+    {
+        if (!$this->filterable) {
+            return null;
+        }
+
+        return $this->filterableField ?? $this->name;
+    }
+
     public function getClass($row): ?string
     {
         return collect()
@@ -167,7 +198,7 @@ abstract class Column extends Component implements ColumnContract
         return $this->width;
     }
 
-    private function isHighlighting(string $value): bool
+    private function isHighlighting(?string $value = null): bool
     {
         return Str::of($value)
             ->lower()
@@ -198,7 +229,7 @@ abstract class Column extends Component implements ColumnContract
         return sprintf('column_%s', $this->getName());
     }
 
-    protected function getValue($row): ?string
+    protected function getValue($row)
     {
         return data_get($row->toArray(), $this->getName());
     }
@@ -238,6 +269,7 @@ abstract class Column extends Component implements ColumnContract
                 'id' => $row->getKey(),
                 'name' => $this->getName(),
                 'data' => $row->{$this->getName()},
+                'filter' => $this->getFilterableField(),
                 'row' => $row,
             ])
             ->render();

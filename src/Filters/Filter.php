@@ -2,6 +2,7 @@
 
 namespace Sashalenz\Wiretables\Filters;
 
+use Illuminate\Support\Str;
 use Sashalenz\Wiretables\Contracts\FilterContract;
 use Spatie\QueryBuilder\AllowedFilter;
 
@@ -11,6 +12,7 @@ abstract class Filter extends AllowedFilter implements FilterContract
     protected ?string $title = null;
     protected ?string $placeholder = null;
     protected ?string $value = null;
+    protected bool $fillable = false;
 
     public function title(string $title): self
     {
@@ -38,6 +40,25 @@ abstract class Filter extends AllowedFilter implements FilterContract
         $this->value = $value;
 
         return $this;
+    }
+
+    public function isFillable(): bool
+    {
+        return $this->fillable;
+    }
+
+    public function hasValue(): bool
+    {
+        return !is_null($this->value);
+    }
+
+    public function getKebabName(): string
+    {
+        return Str::of($this->getName())
+            ->camel()
+            ->kebab()
+            ->prepend('filter-')
+            ->toString();
     }
 
     public function getValue(?string $value = null): ?string
