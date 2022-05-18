@@ -37,7 +37,7 @@ abstract class Table extends Component implements TableContract
         '$refresh',
         'resetTable',
         'addFilter',
-        'addFilterOutside'
+        'addFilterOutside',
     ];
 
     public function resetTable(): void
@@ -72,7 +72,7 @@ abstract class Table extends Component implements TableContract
                 )
             )
             ->when(
-                !method_exists($this, 'mountWithFiltering'),
+                ! method_exists($this, 'mountWithFiltering'),
                 fn (Collection $rows) => $rows->each(
                     fn (Column $column) => $column->notFilterable()
                 )

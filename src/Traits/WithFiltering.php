@@ -31,7 +31,7 @@ trait WithFiltering
         return [
             'filter' => [
                 'except' => '',
-                'as' => self::$filterKey
+                'as' => self::$filterKey,
             ],
         ];
     }
@@ -50,14 +50,14 @@ trait WithFiltering
 
     private function expandFilters(): Collection
     {
-        if (!$this->filter) {
+        if (! $this->filter) {
             return collect();
         }
 
         return Str::of($this->filter)
             ->explode(';')
             ->mapWithKeys(static function ($filter) {
-                if (!str_contains($filter, ':')) {
+                if (! str_contains($filter, ':')) {
                     return [$filter => true];
                 }
 
@@ -70,13 +70,13 @@ trait WithFiltering
     private function shrinkFilters(): string
     {
         return $this->filters
-            ->map(fn($filter, $key) => implode(':', [$key, $filter]))
+            ->map(fn ($filter, $key) => implode(':', [$key, $filter]))
             ->implode(';');
     }
 
-    private function getTrashedFilter():? TrashedFilter
+    private function getTrashedFilter(): ?TrashedFilter
     {
-        if (!method_exists($this->model, 'bootSoftDeletes')) {
+        if (! method_exists($this->model, 'bootSoftDeletes')) {
             return null;
         }
 
@@ -106,7 +106,7 @@ trait WithFiltering
         $filter = $this->filtersWithTrashed()
             ->first(fn (FilterContract $row) => $row->getName() === $key);
 
-        if (!$filter) {
+        if (! $filter) {
             return;
         }
 
@@ -119,7 +119,7 @@ trait WithFiltering
         $filter = $this->filtersWithTrashed()
             ->first(fn (FilterContract $row) => $row->getName() === $key);
 
-        if (!$filter) {
+        if (! $filter) {
             return;
         }
 

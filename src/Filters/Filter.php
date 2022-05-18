@@ -49,7 +49,7 @@ abstract class Filter extends AllowedFilter implements FilterContract
 
     public function hasValue(): bool
     {
-        return !is_null($this->value);
+        return ! is_null($this->value);
     }
 
     public function getKebabName(): string

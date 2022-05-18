@@ -110,7 +110,7 @@ trait WithButtons
 
     protected function getActionColumn(): ?ActionColumn
     {
-        if (!$this->allowedButtons->count()) {
+        if (! $this->allowedButtons->count()) {
             return null;
         }
 

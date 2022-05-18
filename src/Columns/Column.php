@@ -72,7 +72,6 @@ abstract class Column extends Component implements ColumnContract
         return $this;
     }
 
-
     public function class(string $class): self
     {
         $this->class[] = $class;
@@ -151,9 +150,9 @@ abstract class Column extends Component implements ColumnContract
         return $this->sortableField ?? $this->name;
     }
 
-    public function getFilterableField():? string
+    public function getFilterableField(): ?string
     {
-        if (!$this->filterable) {
+        if (! $this->filterable) {
             return null;
         }
 
