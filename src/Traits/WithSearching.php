@@ -12,7 +12,6 @@ trait WithSearching
 
     public function bootWithSearching(): void
     {
-
     }
 
     public function queryStringWithSearching(): array
@@ -20,7 +19,7 @@ trait WithSearching
         return [
             'search' => [
                 'except' => '',
-                'as' => self::$searchKey
+                'as' => self::$searchKey,
             ],
         ];
     }

@@ -25,7 +25,7 @@ trait WithSorting
         return [
             'sort' => [
                 'except' => $this->getDefaultSort(),
-                'as' => self::$sortKey
+                'as' => self::$sortKey,
             ],
         ];
     }

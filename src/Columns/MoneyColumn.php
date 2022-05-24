@@ -65,12 +65,12 @@ class MoneyColumn extends Column
                 'name' => $this->getName(),
                 'data' => $row->{$this->getName()},
                 'showSign' => $this->showSign,
-                'amount' => $this->getAmount($row->{$this->getName()})
+                'amount' => $this->getAmount($row->{$this->getName()}),
             ])
             ->render();
     }
 
-    public function render():? View
+    public function render(): ?View
     {
         return view('wiretables::columns.money-column');
     }

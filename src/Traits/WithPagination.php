@@ -26,7 +26,7 @@ trait WithPagination
         return [
             'page' => [
                 'except' => 1,
-                'as' => self::$pageKey
+                'as' => self::$pageKey,
             ],
         ];
     }
