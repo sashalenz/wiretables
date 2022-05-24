@@ -12,6 +12,8 @@ class WireSelectFilter extends Filter
     protected bool $nestedSet = false;
     protected bool $searchable = false;
     protected bool $fillable = true;
+    protected ?string $orderBy = null;
+    protected ?string $orderDir = null;
 
     public function model(string $model): self
     {
@@ -34,6 +36,21 @@ class WireSelectFilter extends Filter
         return $this;
     }
 
+    public function orderBy(string $orderBy): self
+    {
+        $this->orderBy = $orderBy;
+
+        return $this;
+    }
+
+    public function orderByDesc(string $orderBy): self
+    {
+        $this->orderBy($orderBy);
+        $this->orderDir = 'desc';
+
+        return $this;
+    }
+
     public function render(): View
     {
         return ($this->nestedSet)
@@ -44,6 +61,8 @@ class WireSelectFilter extends Filter
                 value: $this->getValue($this->value),
                 model: $this->model,
                 searchable: $this->searchable,
+                orderBy: $this->orderBy,
+                orderDir: $this->orderDir,
                 emitUp: 'addFilter'
             )->render()
             : WireSelect::make(
@@ -53,6 +72,8 @@ class WireSelectFilter extends Filter
                 value: $this->getValue($this->value),
                 model: $this->model,
                 searchable: $this->searchable,
+                orderBy: $this->orderBy,
+                orderDir: $this->orderDir,
                 emitUp: 'addFilter'
             )->render();
     }

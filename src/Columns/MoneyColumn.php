@@ -2,11 +2,8 @@
 
 namespace Sashalenz\Wiretables\Columns;
 
-use Illuminate\Contracts\View\View;
-use Illuminate\Support\Str;
-use Money\Currencies\ISOCurrencies;
-use Money\Formatter\IntlMoneyFormatter;
 use Money\Money;
+use Illuminate\Contracts\View\View;
 use NumberFormatter;
 
 class MoneyColumn extends Column
@@ -32,29 +29,23 @@ class MoneyColumn extends Column
 
     public function getAmount(Money $value): string
     {
-        $formatter = new IntlMoneyFormatter(
-            new NumberFormatter('ru-RU', NumberFormatter::CURRENCY),
-            new ISOCurrencies()
-        );
-
-        if ($this->showSign) {
+        if ($this->showSign && $value->isNegative()) {
             $value = $value->absolute();
         }
 
-        $string = $formatter->format($value);
+
+        $formatter = new NumberFormatter('ru_RU', NumberFormatter::CURRENCY);
+        $formatter->setAttribute(NumberFormatter::MIN_FRACTION_DIGITS, 2);
 
         if ($this->hideSymbol) {
-            $array = Str::of($string)->explode(' ');
-            $array->pop();
-
-            return $array->implode(' ');
+            $formatter->setSymbol(NumberFormatter::CURRENCY_SYMBOL, '');
+            $formatter->setSymbol(NumberFormatter::INTL_CURRENCY_SYMBOL, '');
         }
 
-        if ($value->getCurrency()->getCode() === 'UAH') {
-            $string = str_replace('₴', 'грн', $string);
-        }
-
-        return $string;
+        return $formatter->formatCurrency(
+            $value->getAmount() / 100,
+            $value->getCurrency()->getCode()
+        );
     }
 
     public function renderIt($row): ?string

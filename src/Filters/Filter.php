@@ -11,8 +11,9 @@ abstract class Filter extends AllowedFilter implements FilterContract
     protected int $size = 6;
     protected ?string $title = null;
     protected ?string $placeholder = null;
-    protected ?string $value = null;
+    public ?string $value = null;
     protected bool $fillable = false;
+    protected bool $fillOnCreate = false;
 
     public function title(string $title): self
     {
@@ -42,9 +43,21 @@ abstract class Filter extends AllowedFilter implements FilterContract
         return $this;
     }
 
+    public function fillOnCreate(): self
+    {
+        $this->fillOnCreate = true;
+
+        return $this;
+    }
+
     public function isFillable(): bool
     {
         return $this->fillable;
+    }
+
+    public function canBeFilledOnCreate(): bool
+    {
+        return $this->fillOnCreate;
     }
 
     public function hasValue(): bool

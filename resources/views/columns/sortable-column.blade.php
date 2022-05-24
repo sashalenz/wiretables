@@ -2,14 +2,14 @@
     @if(method_exists($this, 'getUseSortProperty') && $this->useSort)
         <div class="flex flex-col">
             <button class="focus:outline-none"
-                    x-on:click.prevent="$wire.call('moveOrderUp', {{ $row->id }})"
+                    x-on:click.prevent="$wire.call('moveOrderUp', {{ $id }})"
             >
                 <svg class="text-gray-400 w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
                 </svg>
             </button>
             <button class="focus:outline-none"
-                    x-on:click.prevent="$wire.call('moveOrderDown', {{ $row->id }})"
+                    x-on:click.prevent="$wire.call('moveOrderDown', {{ $id }})"
             >
                 <svg class="text-gray-400 w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M14.707 12.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l2.293-2.293a1 1 0 011.414 0z" clip-rule="evenodd" />

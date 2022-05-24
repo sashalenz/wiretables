@@ -18,19 +18,35 @@ class StackColumn extends Column
         return $this;
     }
 
+    private function getColumns(): array
+    {
+        return collect($this->columns)
+            ->filter(fn ($column) => $column instanceof ColumnContract)
+            ->filter(fn ($column) => $column->canRender)
+            ->when(
+                ! is_null($this->highlight),
+                fn (Collection $columns) => $columns->each(
+                    fn (Column $column) => $column->hasHighlight && $column->highlight($this->highlight)
+                )
+            )
+            ->toArray();
+    }
+
+    public function renderIt($row): ?string
+    {
+        return $this
+            ->render()
+            ?->with([
+                'id' => $row->getKey(),
+                'name' => $this->getName(),
+                'row' => $row,
+                'columns' => $this->getColumns()
+            ])
+            ->render();
+    }
+
     public function render(): ?View
     {
-        return view('wiretables::columns.stack-column', [
-            'columns' => collect($this->columns)
-                ->filter(fn ($column) => $column instanceof ColumnContract)
-                ->filter(fn ($column) => $column->canRender)
-                ->when(
-                    ! is_null($this->highlight),
-                    fn (Collection $columns) => $columns->each(
-                        fn (Column $column) => $column->hasHighlight && $column->highlight($this->highlight)
-                    )
-                )
-            ,
-        ]);
+        return view('wiretables::columns.stack-column');
     }
 }

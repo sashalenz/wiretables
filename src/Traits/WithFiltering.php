@@ -11,7 +11,7 @@ use Sashalenz\Wiretables\Filters\TrashedFilter;
 trait WithFiltering
 {
     public string $filter = '';
-    private Collection $filters;
+    protected Collection $filters;
     protected static string $filterKey = 'filter';
 
     public function hydrateWithFiltering(): void

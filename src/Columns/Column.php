@@ -22,9 +22,6 @@ abstract class Column extends Component implements ColumnContract
     protected bool $sortable = false;
     protected ?string $sortableField = null;
 
-    protected bool $filterable = false;
-    protected ?string $filterableField = null;
-
     protected ?Closure $styleCallback = null;
     protected ?Closure $displayCallback = null;
     protected ?Closure $displayCondition = null;
@@ -55,23 +52,6 @@ abstract class Column extends Component implements ColumnContract
 
         return $this;
     }
-
-    public function filterable(?string $field = null): self
-    {
-        $this->filterable = true;
-        $this->filterableField = $field;
-
-        return $this;
-    }
-
-    public function notFilterable(): self
-    {
-        $this->filterable = false;
-        $this->filterableField = null;
-
-        return $this;
-    }
-
 
     public function class(string $class): self
     {
@@ -149,15 +129,6 @@ abstract class Column extends Component implements ColumnContract
     public function getSortableField(): string
     {
         return $this->sortableField ?? $this->name;
-    }
-
-    public function getFilterableField():? string
-    {
-        if (!$this->filterable) {
-            return null;
-        }
-
-        return $this->filterableField ?? $this->name;
     }
 
     public function getClass($row): ?string
@@ -268,9 +239,7 @@ abstract class Column extends Component implements ColumnContract
             ?->with([
                 'id' => $row->getKey(),
                 'name' => $this->getName(),
-                'data' => $row->{$this->getName()},
-                'filter' => $this->getFilterableField(),
-                'row' => $row,
+                'data' => $row->{$this->getName()}
             ])
             ->render();
     }

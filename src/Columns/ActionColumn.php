@@ -17,10 +17,21 @@ class ActionColumn extends Column
         return $this;
     }
 
+    public function renderIt($row): ?string
+    {
+        return $this
+            ->render()
+            ?->with([
+                'id' => $row->getKey(),
+                'name' => $this->getName(),
+                'row' => $row,
+                'buttons' => $this->buttons
+            ])
+            ->render();
+    }
+
     public function render(): ?View
     {
-        return view('wiretables::columns.action-column', [
-            'buttons' => $this->buttons,
-        ]);
+        return view('wiretables::columns.action-column');
     }
 }

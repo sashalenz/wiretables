@@ -1,6 +1,6 @@
-<button
+<a href="javascript:{}"
    @class(['p-2 group flex items-center text-sm justify-center space-x-1 text-gray-400 rounded-full hover:text-gray-500 focus:outline-none focus:text-gray-500 focus:bg-gray-100 transition ease-in-out duration-150', $class])
-   onclick='Livewire.emit("openModal", "{{ $modal }}", {{ json_encode($params) }})'
+   @click.prevent="window.Livewire.find('{{ $this->id }}').emitSelf('{{ $action }}', '{{ json_encode($params) }}')"
    rel="button"
 >
     @if($icon)
@@ -9,4 +9,4 @@
     @if($title)
         <span class="hidden sm:inline-block">{{ $title }}</span>
     @endif
-</button>
+</a>

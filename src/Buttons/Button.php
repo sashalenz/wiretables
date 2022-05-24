@@ -5,6 +5,7 @@ namespace Sashalenz\Wiretables\Buttons;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
+use JsonException;
 use RuntimeException;
 use Sashalenz\Wiretables\Contracts\ButtonContract;
 
@@ -140,7 +141,7 @@ abstract class Button extends Component implements ButtonContract
             : null;
     }
 
-    protected function isGlobal(): bool
+    public function isGlobal(): bool
     {
         return $this->global;
     }
@@ -150,6 +151,9 @@ abstract class Button extends Component implements ButtonContract
         return new static($name);
     }
 
+    /**
+     * @throws JsonException
+     */
     public function renderIt($row = null): ?View
     {
         if (! $this->canDisplay($row)) {

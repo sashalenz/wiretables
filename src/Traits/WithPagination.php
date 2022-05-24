@@ -7,7 +7,7 @@ use Illuminate\Pagination\Paginator;
 trait WithPagination
 {
     public int $page = 1;
-    public int $perPage = 20;
+    public int $perPage = 25;
     public bool $simplePagination = false;
     protected static string $pageKey = 'page';
 

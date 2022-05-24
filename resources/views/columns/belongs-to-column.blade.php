@@ -6,7 +6,7 @@
             target="_blank"
         >
             @if($icon !== false)
-                <span @if($filter)class="cursor-pointer" @click.prevent="$wire.addFilterOutside('{{ $filter }}', {{ is_object($data) ? $data->id : $data }})" @endif>
+                <span @if($filter && $value)class="cursor-pointer" @click.prevent="$wire.addFilterOutside('{{ $filter }}', {{ $value }})" @endif>
                     @svg($icon ?? 'heroicon-o-link', 'flex-shrink-0 h-4 w-4 text-gray-300 transition ease-in-out duration-150')
                 </span>
             @endif
@@ -23,7 +23,7 @@
             class="inline-flex items-center space-x-1 truncate text-sm leading-5"
         >
             @if($icon !== false)
-                <span @if($filter)class="cursor-pointer" @click.prevent="$wire.addFilterOutside('{{ $filter }}', {{ is_object($data) ? $data->id : $data }})" @endif>
+                <span @if($filter && $value)class="cursor-pointer" @click.prevent="$wire.addFilterOutside('{{ $filter }}', {{ $value }})" @endif>
                      @svg($icon ?? 'heroicon-o-link', 'flex-shrink-0 h-4 w-4 text-gray-300')
                 </span>
             @endif

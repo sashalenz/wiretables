@@ -8,6 +8,8 @@ interface FilterContract
 {
     public function getName(): string;
 
+    public function canBeFilledOnCreate(): bool;
+
     public function title(string $title): self;
 
     public function placeholder(string $placeholder): self;

@@ -10,6 +10,7 @@ use Sashalenz\Wiretables\Buttons\LinkButton;
 use Sashalenz\Wiretables\Buttons\ModalButton;
 use Sashalenz\Wiretables\Columns\ActionColumn;
 use Sashalenz\Wiretables\Contracts\ButtonContract;
+use Sashalenz\Wiretables\Contracts\FilterContract;
 use Sashalenz\Wiretables\Modals\DeleteModal;
 use Sashalenz\Wiretables\Modals\RestoreModal;
 
@@ -90,6 +91,25 @@ trait WithButtons
             ->filter(fn ($button) => $button instanceof ButtonContract);
     }
 
+    private function getCreateButtonParams(): array
+    {
+        $buttons = [];
+
+        if (method_exists($this, 'mountWithFiltering')) {
+            $buttons['fillFields'] = $this->allowedFilters
+                ->filter(fn (FilterContract $filter) => $filter->canBeFilledOnCreate() && !is_null($filter->value))
+                ->mapWithKeys(fn (FilterContract $filter) => [$filter->getName() => $filter->value])
+                ->toArray();
+        }
+
+        return array_filter(
+            array_merge_recursive(
+                $this->createButtonParams,
+                $buttons
+            )
+        );
+    }
+
     public function getGlobalButtonsProperty(): Collection
     {
         return $this->buttons()
@@ -101,7 +121,7 @@ trait WithButtons
                         ->icon('heroicon-o-plus')
                         ->title(__('wiretables::table.add'))
                         ->modal($this->createButton)
-                        ->withParams(fn () => $this->createButtonParams)
+                        ->withParams(fn () => $this->getCreateButtonParams())
                         ->displayIf(fn () => $this->can('create', $this->model))
                 )
             )
