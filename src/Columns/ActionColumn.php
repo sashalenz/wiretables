@@ -25,7 +25,7 @@ class ActionColumn extends Column
                 'id' => $row->getKey(),
                 'name' => $this->getName(),
                 'row' => $row,
-                'buttons' => $this->buttons
+                'buttons' => $this->buttons,
             ])
             ->render();
     }

@@ -239,7 +239,7 @@ abstract class Column extends Component implements ColumnContract
             ?->with([
                 'id' => $row->getKey(),
                 'name' => $this->getName(),
-                'data' => $row->{$this->getName()}
+                'data' => $row->{$this->getName()},
             ])
             ->render();
     }

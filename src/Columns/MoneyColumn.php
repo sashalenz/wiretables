@@ -2,8 +2,8 @@
 
 namespace Sashalenz\Wiretables\Columns;
 
-use Money\Money;
 use Illuminate\Contracts\View\View;
+use Money\Money;
 use NumberFormatter;
 
 class MoneyColumn extends Column

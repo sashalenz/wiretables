@@ -28,7 +28,7 @@ class ActionButton extends Button
         return view('wiretables::buttons.action-button')
             ->with([
                 'action' => $this->action,
-                'params' => $this->params ?? []
+                'params' => $this->params ?? [],
             ]);
     }
 }

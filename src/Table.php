@@ -37,7 +37,7 @@ abstract class Table extends Component implements TableContract
         '$refresh',
         'resetTable',
         'addFilter',
-        'addFilterOutside'
+        'addFilterOutside',
     ];
 
     public function resetTable(): void
