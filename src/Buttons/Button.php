@@ -166,12 +166,13 @@ abstract class Button extends Component implements ButtonContract
 
         return $this->render()
             ->with([
+                'name' => $this->getName(),
                 'icon' => $this->getIcon(),
                 'title' => $this->getTitle(),
                 'class' => $this->getClass($row),
                 'route' => $this->getRoute($row),
                 'params' => $this->getRouteParams($row),
-                'row' => $row,
+                'key' => collect(['button', $row?->id, $this->getName()])->filter()->implode('-')
             ]);
     }
 }

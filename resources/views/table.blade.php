@@ -1,24 +1,23 @@
 <div class="max-w-full mx-auto px-4 pt-4">
     <div class="flex flex-wrap w-full justify-between items-center">
-        <x-breadcrumbs />
+        <x-breadcrumbs wire:key="breadcrumbs" wire:ignore />
+
         @if($this->globalButtons)
             <div class="flex space-x-1 items-center sm:pr-4">
                 @foreach($this->globalButtons as $button)
-                    <div wire:key="button_{{ $button->getName() }}">
-                        {!! $button->renderIt() !!}
-                    </div>
+                    {!! $button->renderIt() !!}
                 @endforeach
             </div>
         @endif
     </div>
     <div class="mx-auto py-2 animated fadeIn">
-        <div class="flex flex-col space-y-3 py-2 sm:px-4">
+        <div class="flex flex-col py-2 sm:px-4">
             <div
-                x-data="{ filtersCount: {{ $this->allowedFilters->count() }}, filtersAreShown: false }"
+                x-data="{ filtersCount: {{ $this->allowedFilters?->count() ?? 0 }}, filtersAreShown: false }"
                 x-init="filtersAreShown = {{ $this->filter ? 'true' : 'false' }}"
             >
                 <div class="py-2 flex justify-between items-center">
-                    @unless($this->disableSearch)
+                    @if(!method_exists($this, 'bootWithSearching') || !$this->disableSearch)
                         <div class="lg:max-w-sm flex items-center">
                             <label for="search" class="sr-only">{{ __('wiretables::table.search') }}</label>
                             <div class="relative">
@@ -46,7 +45,8 @@
                                 @endunless
                             </div>
                         </div>
-                    @endunless
+                    @endif
+
                     <div class="content-center flex items-center h-6 space-x-2">
                         <a href="javascript:{}"
                            class="p-2 text-gray-400 rounded-full group hover:text-gray-500 focus:outline-none focus:text-gray-500 focus:bg-gray-200 transition ease-in-out duration-150"
@@ -79,118 +79,56 @@
                     </div>
                 </div>
 
-                <div
-                    class="flex justify-between bg-white border border-gray-200 px-4 py-2 whitespace-nowrap text-gray-700 grid grid-cols-1 gap-4 sm:grid-cols-6 align-center items-center rounded-sm"
-                    x-show="filtersCount && filtersAreShown"
-                    x-transition:enter="transition ease-out duration-300"
-                    x-transition:enter-start="opacity-0 scale-90"
-                    x-transition:enter-end="opacity-100 scale-100"
-                    x-transition:leave="transition ease-in duration-200"
-                    x-transition:leave-start="opacity-100 scale-100"
-                    x-transition:leave-end="opacity-0 scale-90"
-                    x-cloak
-                >
-                    @foreach($this->allowedFilters as $filter)
-                        <div
-                            class="col-span-1"
-                            @if($filter->isFillable())
-                                @update-{{ $filter->getKebabName() }}.window="event => { $el.querySelectorAll('div[wire\\:id]').forEach((el) => window.Livewire.find(el.getAttribute('wire:id')).emitSelf('fillParent', event.detail.value)) }"
-                            @endif
-                        >
-                            {!! $filter->render() !!}
-                        </div>
-                    @endforeach
-                </div>
-
-                <div
-                    x-data="window.toggleHandler()"
-                    x-show="checked.length"
-                    x-cloak
-                    @toggle-check.window="toggleCheck($event.detail)"
-                    class="flex justify-between bg-white px-6 py-4 whitespace-nowrap border-t border-gray-200 last:border-0 text-gray-700 flex flex-wrap w-full align-center items-center"
-                    x-transition:enter="transition ease-linear duration-300 transform"
-                    x-transition:enter-start="opacity-0"
-                    x-transition:enter-end="opacity-100"
-                    x-transition:leave="transition ease-linear duration-300 transform"
-                    x-transition:leave-start="opacity-100"
-                    x-transition:leave-end="opacity-0"
-                >
-                    @foreach($this->actions as $action)
-                        @livewire($action->getName(), ['model' => $action->getModel(), 'icon' => $action->getIcon(), 'title' => $action->getTitle(), 'size' => $action->getSize()], key($loop->index))
-                    @endforeach
-                </div>
-            </div>
-
-            <div>
-                <div class="overflow-x-auto align-middle inline-block w-full">
-                    <table class="w-full overflow-x-scroll border border-gray-200 rounded-sm"
-                           x-data="{ moving: false }"
+                @if(method_exists($this, 'mountWithFiltering'))
+                    <div
+                        class="flex justify-between bg-white border border-gray-200 px-4 py-2 mb-2 whitespace-nowrap text-gray-700 grid grid-cols-1 gap-4 sm:grid-cols-6 align-center items-center rounded-sm"
+                        x-show="filtersCount && filtersAreShown"
+                        x-transition:enter="transition ease-out duration-300"
+                        x-transition:enter-start="opacity-0 scale-90"
+                        x-transition:enter-end="opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-200"
+                        x-transition:leave-start="opacity-100 scale-100"
+                        x-transition:leave-end="opacity-0 scale-90"
+                        x-cloak
                     >
-                        <thead>
-                        <tr>
-                            @foreach($this->columns as $column)
-                                <th class="p-2 md:px-4 md:py-3 xl:px-6 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider" @if($column->getWidth())style="width: {{ $column->getWidth() }}%;"@endif>
-                                    {!! $column->renderTitle() !!}
-                                </th>
-                            @endforeach
-                        </tr>
-                        </thead>
-                        <tbody class="bg-white leading-6 md:leading-5 text-gray-700"
-                               @if(method_exists($this, 'getUseSortProperty') && $this->useSort)
-                                   x-on:drop="
-                            moving = false
-                            const id = event.dataTransfer.getData('text/plain');
-                            const target = event.target.closest('tr');
-                            $wire.call('updateRowSort', id, target.dataset.id);
-                       "
-                               x-on:drop.prevent="
-                            const id = event.dataTransfer.getData('text/plain');
-                            const target = event.target.closest('tr');
-                            const element = document.getElementById('row-'+id);
-                            target.before(element);
-                       "
-                               x-on:dragover.prevent="moving = true"
-                               x-on:dragleave.prevent="moving = false"
-                            @endif
-                        >
-                        @forelse($this->data->items() as $row)
-                            <tr id="row-{{ $row->id }}"
-                                class="odd:bg-gray-50"
-                                @if(method_exists($this, 'getUseSortProperty') && $this->useSort)
-                                    draggable="true"
-                                data-id="{{ $row->id }}"
-                                x-data="{ dragging: false }"
-                                x-on:dragend="dragging = false"
-                                x-on:dragstart.self="
-                                dragging = true;
-                                event.dataTransfer.effectAllowed = 'move';
-                                event.dataTransfer.setData('text/plain', event.target.dataset.id);
-                            "
+                        @foreach($this->allowedFilters as $filter)
+                            <div
+                                class="col-span-1"
+                                @if($filter->isFillable())
+                                    @update-{{ $filter->getKebabName() }}.window="event => { $el.querySelectorAll('div[wire\\:id]').forEach((el) => window.Livewire.find(el.getAttribute('wire:id')).emitSelf('fillParent', event.detail.value)) }"
                                 @endif
                             >
-                                @foreach($this->columns as $column)
-                                    <td @class(['p-2 md:px-4 md:py-3 xl:py-4 xl:px-6', $column->getClass($row)])>
-                                        @if($column->canDisplay($row))
-                                            {!! $column->renderIt($row) !!}
-                                        @endif
-                                    </td>
-                                @endforeach
-                            </tr>
-                        @empty
-                            <tr>
-                                <td class="p-2 md:px-4 md:py-3 xl:py-4 xl:px-6 whitespace-nowrap border-b border-gray-200" colspan="100">
-                                    <div class="flex items-center text-gray-500 justify-center">
-                                        @lang('wiretables::table.table_is_empty')
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                        </tbody>
-                    </table>
-                </div>
-                <div class="w-full overflow-x-auto">
-                    {{ $this->data->links() }}
-                </div>
+                                {!! $filter->render() !!}
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+
+                @if(method_exists($this, 'bootWithActions'))
+                    <div
+                        x-data="window.toggleHandler()"
+                        x-show="checked.length"
+                        x-cloak
+                        @toggle-check.window="toggleCheck($event.detail)"
+                        class="flex justify-between bg-white px-6 py-4 mb-2 whitespace-nowrap border-t border-gray-200 last:border-0 text-gray-700 flex flex-wrap w-full align-center items-center"
+                        x-transition:enter="transition ease-linear duration-300 transform"
+                        x-transition:enter-start="opacity-0"
+                        x-transition:enter-end="opacity-100"
+                        x-transition:leave="transition ease-linear duration-300 transform"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"
+                    >
+                        @foreach($this->actions as $action)
+                            @livewire($action->getName(), ['model' => $action->getModel(), 'icon' => $action->getIcon(), 'title' => $action->getTitle(), 'size' => $action->getSize()], key($loop->index))
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+
+            <x-wiretables-wiretable />
+
+            <div class="w-full overflow-x-auto">
+                {{ $this->data->links() }}
             </div>
         </div>
     </div>

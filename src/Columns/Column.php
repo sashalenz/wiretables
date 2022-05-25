@@ -29,7 +29,6 @@ abstract class Column extends Component implements ColumnContract
     protected ?string $currentSort = null;
     protected ?string $highlight = null;
     public bool $hasHighlight = false;
-    public bool $canRender = true;
 
     public function __construct($name)
     {
@@ -105,13 +104,6 @@ abstract class Column extends Component implements ColumnContract
     public function toCenter(): self
     {
         $this->class[] = 'text-center';
-
-        return $this;
-    }
-
-    public function canSee(string $ability, string $model): self
-    {
-        $this->canRender = $this->authorizeModel($ability, $model);
 
         return $this;
     }

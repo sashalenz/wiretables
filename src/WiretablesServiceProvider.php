@@ -3,6 +3,7 @@
 namespace Sashalenz\Wiretables;
 
 use Livewire\Livewire;
+use Sashalenz\Wiretables\Components\Wiretable;
 use Sashalenz\Wiretables\Modals\DeleteModal;
 use Sashalenz\Wiretables\Modals\RestoreModal;
 use Spatie\LaravelPackageTools\Package;
@@ -16,11 +17,15 @@ class WiretablesServiceProvider extends PackageServiceProvider
             ->name('wiretables')
             ->hasConfigFile()
             ->hasTranslations()
-            ->hasViews();
+            ->hasViews('wiretables');
     }
 
     public function packageBooted(): void
     {
+        $this->loadViewComponentsAs('wiretables', [
+            Wiretable::class
+        ]);
+
         Livewire::component(DeleteModal::getName(), DeleteModal::class);
         Livewire::component(RestoreModal::getName(), RestoreModal::class);
     }

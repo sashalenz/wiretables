@@ -10,6 +10,7 @@ use Sashalenz\Wiretables\Buttons\LinkButton;
 use Sashalenz\Wiretables\Buttons\ModalButton;
 use Sashalenz\Wiretables\Columns\ActionColumn;
 use Sashalenz\Wiretables\Contracts\ButtonContract;
+use Sashalenz\Wiretables\Contracts\ColumnContract;
 use Sashalenz\Wiretables\Contracts\FilterContract;
 use Sashalenz\Wiretables\Modals\DeleteModal;
 use Sashalenz\Wiretables\Modals\RestoreModal;
@@ -116,19 +117,22 @@ trait WithButtons
             ->filter(fn (ButtonContract $button) => $button->isGlobal())
             ->when(
                 $this->createButton,
-                fn ($buttons) => $buttons->push(
-                    ModalButton::make('create')
-                        ->icon('heroicon-o-plus')
-                        ->title(__('wiretables::table.add'))
-                        ->modal($this->createButton)
-                        ->withParams(fn () => $this->getCreateButtonParams())
-                        ->displayIf(fn () => $this->can('create', $this->model))
-                )
+                fn ($buttons) => $buttons->push($this->getCreateButton())
             )
             ->filter(fn ($button) => $button instanceof ButtonContract);
     }
 
-    protected function getActionColumn(): ?ActionColumn
+    protected function getCreateButton(): ButtonContract
+    {
+        return ModalButton::make('create')
+            ->icon('heroicon-o-plus')
+            ->title(__('wiretables::table.add'))
+            ->modal($this->createButton)
+            ->withParams(fn () => $this->getCreateButtonParams())
+            ->displayIf(fn () => $this->can('create', $this->model));
+    }
+
+    protected function getActionColumn(): ?ColumnContract
     {
         if (! $this->allowedButtons->count()) {
             return null;

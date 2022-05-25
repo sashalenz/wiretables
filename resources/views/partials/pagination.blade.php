@@ -1,4 +1,4 @@
-<div class="bg-white px-4 py-3 flex border border-t-0 border-gray-200  items-center justify-between sm:px-6">
+<div class="bg-white px-4 py-3 flex border border-gray-200 items-center justify-between sm:px-6">
     <div class="hidden sm:block">
         <p class="text-sm leading-5 text-gray-700">
             @lang('wiretables::table.total', ['from' => $paginator->firstItem() ?? 0, 'to' => $paginator->lastItem() ?? 0, 'total' => $paginator->total()])
