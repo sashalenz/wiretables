@@ -12,7 +12,6 @@ trait WithSearching
 
     public function bootWithSearching(): void
     {
-
     }
 
     public function queryStringWithSearching(): array

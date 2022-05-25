@@ -28,7 +28,7 @@ abstract class Wiretable extends Component implements TableContract
         '$refresh',
         'resetTable',
         'addFilter',
-        'addFilterOutside'
+        'addFilterOutside',
     ];
 
     public function resetTable(): void
@@ -105,7 +105,7 @@ abstract class Wiretable extends Component implements TableContract
                 );
         }
 
-        if (method_exists($this, 'bootWithSearching') && (!$this->disableSearch && $this->search)) {
+        if (method_exists($this, 'bootWithSearching') && (! $this->disableSearch && $this->search)) {
             $builder = $builder
                 ->tap(
                     new SearchFilter($this->search, $this->strict)

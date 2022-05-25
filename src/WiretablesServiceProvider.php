@@ -23,7 +23,7 @@ class WiretablesServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         $this->loadViewComponentsAs('wiretables', [
-            Wiretable::class
+            Wiretable::class,
         ]);
 
         Livewire::component(DeleteModal::getName(), DeleteModal::class);

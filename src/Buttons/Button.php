@@ -172,7 +172,7 @@ abstract class Button extends Component implements ButtonContract
                 'class' => $this->getClass($row),
                 'route' => $this->getRoute($row),
                 'params' => $this->getRouteParams($row),
-                'key' => collect(['button', $row?->id, $this->getName()])->filter()->implode('-')
+                'key' => collect(['button', $row?->id, $this->getName()])->filter()->implode('-'),
             ]);
     }
 }
