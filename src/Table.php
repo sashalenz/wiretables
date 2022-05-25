@@ -6,7 +6,6 @@ use Illuminate\Contracts\View\View;
 use Sashalenz\Wiretables\Traits\WithActions;
 use Sashalenz\Wiretables\Traits\WithButtons;
 use Sashalenz\Wiretables\Traits\WithFiltering;
-use Sashalenz\Wiretables\Traits\WithPagination;
 use Sashalenz\Wiretables\Traits\WithSearching;
 use Sashalenz\Wiretables\Traits\WithSorting;
 

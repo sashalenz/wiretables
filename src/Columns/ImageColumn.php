@@ -8,7 +8,7 @@ class ImageColumn extends Column
 {
     public function renderIt($row): ?string
     {
-        if (!method_exists($row, 'getFirstMediaUrl')) {
+        if (! method_exists($row, 'getFirstMediaUrl')) {
             return null;
         }
 
@@ -18,7 +18,7 @@ class ImageColumn extends Column
                 'id' => $row->getKey(),
                 'name' => $this->getName(),
                 'data' => $row->getFirstMediaUrl($this->getName(), $row::THUMBNAIL),
-                'alt' => $row->getDisplayName()
+                'alt' => $row->getDisplayName(),
             ])
             ->render();
     }

@@ -50,9 +50,9 @@ class BelongsToColumn extends Column
         return parent::canDisplay($row);
     }
 
-    public function getFilterableField():? string
+    public function getFilterableField(): ?string
     {
-        if (!$this->filterable) {
+        if (! $this->filterable) {
             return null;
         }
 
@@ -72,7 +72,7 @@ class BelongsToColumn extends Column
                 'filter' => $this->getFilterableField(),
                 'value' => $row->{$this->getName()}?->getKey(),
                 'icon' => $this->icon,
-                'route' => $this->route
+                'route' => $this->route,
             ])
             ->render();
     }

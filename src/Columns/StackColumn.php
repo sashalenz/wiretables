@@ -40,7 +40,7 @@ class StackColumn extends Column
                 'id' => $row->getKey(),
                 'name' => $this->getName(),
                 'row' => $row,
-                'columns' => $this->getColumns()
+                'columns' => $this->getColumns(),
             ])
             ->render();
     }

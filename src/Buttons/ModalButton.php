@@ -19,7 +19,7 @@ class ModalButton extends Button
     {
         return view('wiretables::buttons.modal-button')
             ->with([
-                'modal' => $this->modal
+                'modal' => $this->modal,
             ]);
     }
 }
