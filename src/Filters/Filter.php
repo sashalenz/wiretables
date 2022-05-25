@@ -8,7 +8,7 @@ use Spatie\QueryBuilder\AllowedFilter;
 
 abstract class Filter extends AllowedFilter implements FilterContract
 {
-    protected int $size = 6;
+    protected int $size = 2;
     protected ?string $title = null;
     protected ?string $placeholder = null;
     public ?string $value = null;
@@ -63,6 +63,11 @@ abstract class Filter extends AllowedFilter implements FilterContract
     public function hasValue(): bool
     {
         return ! is_null($this->value);
+    }
+
+    public function getSize(): int
+    {
+        return $this->size;
     }
 
     public function getKebabName(): string
