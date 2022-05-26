@@ -70,6 +70,11 @@ abstract class Filter extends AllowedFilter implements FilterContract
         return $this->size;
     }
 
+    public function getPlaceholder(): string
+    {
+        return $this->placeholder;
+    }
+
     public function getKebabName(): string
     {
         return Str::of($this->getName())

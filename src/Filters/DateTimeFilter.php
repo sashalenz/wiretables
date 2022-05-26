@@ -40,8 +40,8 @@ class DateTimeFilter extends Filter
     public function render(): View
     {
         return DateTime::make(
-            name: $this->name,
-            placeholder: $this->placeholder,
+            name: $this->getName(),
+            placeholder: $this->getPlaceholder(),
             showLabel: false,
             value: $this->getValue($this->value),
             allowClear: true,

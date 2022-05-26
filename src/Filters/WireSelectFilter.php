@@ -57,8 +57,8 @@ class WireSelectFilter extends Filter
             : WireSelect::class;
 
         return $class::make(
-                name: $this->name,
-                placeholder: $this->placeholder,
+                name: $this->getName(),
+                placeholder: $this->getPlaceholder(),
                 showLabel: false,
                 value: $this->getValue($this->value),
                 model: $this->model,

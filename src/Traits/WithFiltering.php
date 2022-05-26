@@ -80,9 +80,8 @@ trait WithFiltering
             return null;
         }
 
-        return TrashedFilter::trashed()
-            ->default(null)
-            ->size(1);
+        return TrashedFilter::make()
+            ->default(null);
     }
 
     protected function filters(): Collection

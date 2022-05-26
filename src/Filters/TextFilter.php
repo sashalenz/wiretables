@@ -10,8 +10,8 @@ class TextFilter extends Filter
     public function render(): View
     {
         return Text::make(
-            name: $this->name,
-            placeholder: $this->placeholder,
+            name: $this->getName(),
+            placeholder: $this->getPlaceholder(),
             showLabel: false,
             allowClear: true,
             value: $this->getValue($this->value)
