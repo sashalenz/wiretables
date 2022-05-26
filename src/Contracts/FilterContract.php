@@ -12,6 +12,8 @@ interface FilterContract
 
     public function title(string $title): self;
 
+    public function isFillable(): bool;
+
     public function placeholder(string $placeholder): self;
 
     public function size(int $size): self;

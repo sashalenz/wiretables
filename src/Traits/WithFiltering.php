@@ -111,7 +111,10 @@ trait WithFiltering
         }
 
         $this->addFilter($key, $value);
-        $this->dispatchBrowserEvent('update-' . $filter->getKebabName(), ['value' => $value]);
+
+        if ($filter->isFillable()) {
+            $this->dispatchBrowserEvent('update-' . $filter->getKebabName(), ['value' => $value]);
+        }
     }
 
     public function addFilter($key, $value): void

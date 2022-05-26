@@ -3,40 +3,19 @@
 namespace Sashalenz\Wiretables\Columns;
 
 use Illuminate\Contracts\View\View;
+use Sashalenz\Wiretables\Traits\HasFilterable;
+use Sashalenz\Wiretables\Traits\HasIcon;
 
 class BelongsToColumn extends Column
 {
-    protected string|bool|null $icon = null;
+    use HasFilterable;
+    use HasIcon;
+
     protected ?string $route = null;
-    protected bool $filterable = false;
-    protected ?string $filterableField = null;
-
-    public function icon(string|bool $icon): self
-    {
-        $this->icon = $icon;
-
-        return $this;
-    }
 
     public function route(string $route): self
     {
         $this->route = $route;
-
-        return $this;
-    }
-
-    public function filterable(?string $field = null): self
-    {
-        $this->filterable = true;
-        $this->filterableField = $field;
-
-        return $this;
-    }
-
-    public function notFilterable(): self
-    {
-        $this->filterable = false;
-        $this->filterableField = null;
 
         return $this;
     }
@@ -50,15 +29,6 @@ class BelongsToColumn extends Column
         return parent::canDisplay($row);
     }
 
-    public function getFilterableField(): ?string
-    {
-        if (! $this->filterable) {
-            return null;
-        }
-
-        return $this->filterableField ?? $this->name;
-    }
-
     public function renderIt($row): ?string
     {
         return $this
@@ -69,9 +39,9 @@ class BelongsToColumn extends Column
                 'data' => $this->hasDisplayCallback()
                     ? $this->display($row)
                     : $row->{$this->getName()},
-                'filter' => $this->getFilterableField(),
                 'value' => $row->{$this->getName()}?->getKey(),
-                'icon' => $this->icon,
+                'filter' => $this->getFilterableField(),
+                'icon' => $this->getIcon(),
                 'route' => $this->route,
             ])
             ->render();

@@ -11,7 +11,6 @@ class WireSelectFilter extends Filter
     private ?string $model = null;
     protected bool $nestedSet = false;
     protected bool $searchable = false;
-    protected bool $fillable = true;
     protected ?string $orderBy = null;
     protected ?string $orderDir = null;
 
@@ -53,8 +52,11 @@ class WireSelectFilter extends Filter
 
     public function render(): View
     {
-        return ($this->nestedSet)
-            ? NestedSetSelect::make(
+        $class = ($this->nestedSet)
+            ? NestedSetSelect::class
+            : WireSelect::class;
+
+        return $class::make(
                 name: $this->name,
                 placeholder: $this->placeholder,
                 showLabel: false,
@@ -64,17 +66,10 @@ class WireSelectFilter extends Filter
                 orderBy: $this->orderBy,
                 orderDir: $this->orderDir,
                 emitUp: 'addFilter'
-            )->render()
-            : WireSelect::make(
-                name: $this->name,
-                placeholder: $this->placeholder,
-                showLabel: false,
-                value: $this->getValue($this->value),
-                model: $this->model,
-                searchable: $this->searchable,
-                orderBy: $this->orderBy,
-                orderDir: $this->orderDir,
-                emitUp: 'addFilter'
-            )->render();
+            )
+            ->withAttributes(array_filter([
+                "x-on:update-{$this->getKebabName()}.window" => "event => { \$el.querySelectorAll('div[wire\\\\:id]').forEach((el) => window.Livewire.find(el.getAttribute('wire:id')).emitSelf('fillParent', event.detail.value)) }"
+            ]))
+            ->render();
     }
 }

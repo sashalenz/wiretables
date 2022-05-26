@@ -55,12 +55,7 @@
                 x-cloak
             >
                 @foreach($this->allowedFilters as $filter)
-                    <div
-                        class="cols-span-12 sm:col-span-{{ $filter->getSize() }}"
-                        @if($filter->isFillable())
-                            @update-{{ $filter->getKebabName() }}.window="event => { $el.querySelectorAll('div[wire\\:id]').forEach((el) => window.Livewire.find(el.getAttribute('wire:id')).emitSelf('fillParent', event.detail.value)) }"
-                        @endif
-                    >
+                    <div class="cols-span-12 sm:col-span-{{ $filter->getSize() }}">
                         {!! $filter->render() !!}
                     </div>
                 @endforeach

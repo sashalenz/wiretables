@@ -12,7 +12,7 @@ abstract class Filter extends AllowedFilter implements FilterContract
     protected ?string $title = null;
     protected ?string $placeholder = null;
     public ?string $value = null;
-    protected bool $fillable = false;
+    protected bool $fillable = true;
     protected bool $fillOnCreate = false;
 
     public function title(string $title): self
