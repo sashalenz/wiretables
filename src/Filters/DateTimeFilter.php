@@ -50,7 +50,7 @@ class DateTimeFilter extends Filter
         )
             ->withAttributes([
                 "wire:change" => "addFilter('$this->name', \$event.target.value)",
-                "x-on:update-{$this->getKebabName()}.window" => "reset()"
+                "x-on:update-{$this->getKebabName()}.window" => "reset()",
             ])
             ->render();
     }
