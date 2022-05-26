@@ -57,18 +57,18 @@ class WireSelectFilter extends Filter
             : WireSelect::class;
 
         return $class::make(
-                name: $this->name,
-                placeholder: $this->placeholder,
-                showLabel: false,
-                value: $this->getValue($this->value),
-                model: $this->model,
-                searchable: $this->searchable,
-                orderBy: $this->orderBy,
-                orderDir: $this->orderDir,
-                emitUp: 'addFilter'
-            )
+            name: $this->name,
+            placeholder: $this->placeholder,
+            showLabel: false,
+            value: $this->getValue($this->value),
+            model: $this->model,
+            searchable: $this->searchable,
+            orderBy: $this->orderBy,
+            orderDir: $this->orderDir,
+            emitUp: 'addFilter'
+        )
             ->withAttributes(array_filter([
-                "x-on:update-{$this->getKebabName()}.window" => "event => { \$el.querySelectorAll('div[wire\\\\:id]').forEach((el) => window.Livewire.find(el.getAttribute('wire:id')).emitSelf('fillParent', event.detail.value)) }"
+                "x-on:update-{$this->getKebabName()}.window" => "event => { \$el.querySelectorAll('div[wire\\\\:id]').forEach((el) => window.Livewire.find(el.getAttribute('wire:id')).emitSelf('fillParent', event.detail.value)) }",
             ]))
             ->render();
     }

@@ -20,7 +20,7 @@ class BatchUuidColumn extends Column
                 'name' => $this->getName(),
                 'value' => $row->{$this->getName()},
                 'icon' => $this->getIcon(),
-                'filter' => $this->getFilterableField()
+                'filter' => $this->getFilterableField(),
             ])
             ->render();
     }

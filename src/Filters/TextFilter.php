@@ -18,7 +18,7 @@ class TextFilter extends Filter
         )
             ->withAttributes([
                 "x-on:input.debounce.1s" => "\$wire.addFilter('$this->name', \$event.target.value)",
-                "x-on:update-{$this->getKebabName()}.window" => "\$refs.input.value = event.detail.value"
+                "x-on:update-{$this->getKebabName()}.window" => "\$refs.input.value = event.detail.value",
             ])
             ->render();
     }
