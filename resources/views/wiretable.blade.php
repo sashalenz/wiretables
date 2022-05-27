@@ -21,7 +21,7 @@
                             placeholder="{{ __('wiretables::table.search') }}"
                             type="search"
                             value="{{  $this->search }}"
-                            wire:input.debounce.500ms="searchBy($event.target.value)"
+                            wire:model.debounce.1s="search"
                             class="block w-60 px-8 py-1 border border-gray-200 leading-5 bg-white placeholder-gray-300 focus:outline-none focus:placeholder-gray-400 focus:border-primary-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition duration-150 ease-in-out rounded-sm"
                         >
                         @unless($this->disableStrict)

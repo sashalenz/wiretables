@@ -26,18 +26,11 @@ trait WithSearching
 
     protected function resetSearch(): void
     {
-        $this->setSearch('');
+        $this->search = '';
     }
 
-    private function setSearch($search): void
+    public function updatedSearch(): void
     {
-        $this->search = (string) $search;
-    }
-
-    public function searchBy($search): void
-    {
-        $this->setSearch($search);
-
         if (method_exists($this, 'resetPage')) {
             $this->resetPage();
         }

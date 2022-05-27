@@ -4,25 +4,24 @@ namespace Sashalenz\Wiretables\Columns;
 
 use Closure;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\View\Component;
 use Sashalenz\Wireforms\Traits\Authorizable;
 use Sashalenz\Wiretables\Contracts\ColumnContract;
+use Sashalenz\Wiretables\Traits\HasClass;
 
 abstract class Column extends Component implements ColumnContract
 {
     use Authorizable;
+    use HasClass;
 
     protected string $name;
-    protected array $class = [];
     protected ?string $title = null;
     protected ?int $width = null;
 
     protected bool $sortable = false;
     protected ?string $sortableField = null;
 
-    protected ?Closure $styleCallback = null;
     protected ?Closure $displayCallback = null;
     protected ?Closure $displayCondition = null;
 
@@ -48,13 +47,6 @@ abstract class Column extends Component implements ColumnContract
     {
         $this->sortable = true;
         $this->sortableField = $field;
-
-        return $this;
-    }
-
-    public function class(string $class): self
-    {
-        $this->class[] = $class;
 
         return $this;
     }
@@ -94,20 +86,6 @@ abstract class Column extends Component implements ColumnContract
         return $this;
     }
 
-    public function styleUsing(callable $styleCallback): self
-    {
-        $this->styleCallback = $styleCallback;
-
-        return $this;
-    }
-
-    public function toCenter(): self
-    {
-        $this->class[] = 'text-center';
-
-        return $this;
-    }
-
     public function getTitle(): ?string
     {
         return $this->title;
@@ -123,34 +101,6 @@ abstract class Column extends Component implements ColumnContract
         return $this->sortableField ?? $this->name;
     }
 
-    public function getClass($row): ?string
-    {
-        return collect()
-            ->push($this->class)
-            ->when(
-                is_callable($this->styleCallback),
-                fn ($collection) => $collection->push(call_user_func($this->styleCallback, $row))
-            )
-            ->when(
-                $this->hasHighlight && ! is_null($this->highlight),
-                fn (Collection $collection) => $collection->when(
-                    $this->hasDisplayCallback(),
-                    fn (Collection $collection) => $collection->when(
-                        $this->isHighlighting($this->display($row)),
-                        fn (Collection $collection) => $collection->push('text-green-500')
-                    ),
-                    fn (Collection $collection) => $collection->when(
-                        is_null($this->render()) && $this->isHighlighting($this->getValue($row)),
-                        fn (Collection $collection) => $collection->push('text-green-500')
-                    )
-                )
-            )
-            ->filter()
-            ->flatten()
-            ->unique()
-            ->implode(' ');
-    }
-
     public function getName(): string
     {
         return $this->name;
@@ -161,7 +111,7 @@ abstract class Column extends Component implements ColumnContract
         return $this->width;
     }
 
-    private function isHighlighting(?string $value = null): bool
+    protected function isHighlighting(?string $value = null): bool
     {
         return Str::of($value)
             ->lower()

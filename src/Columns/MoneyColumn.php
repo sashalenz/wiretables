@@ -11,11 +11,19 @@ class MoneyColumn extends Column
     public string $currency;
     public bool $hideSymbol = false;
     public bool $showSign = false;
+    public bool $hideZero = false;
     protected array $class = ['font-bold'];
 
     public function hideSymbol(): self
     {
         $this->hideSymbol = true;
+
+        return $this;
+    }
+
+    public function hideZero(): self
+    {
+        $this->hideZero = true;
 
         return $this;
     }
@@ -65,6 +73,7 @@ class MoneyColumn extends Column
                 'name' => $this->getName(),
                 'data' => $row->{$this->getName()},
                 'showSign' => $this->showSign,
+                'hideZero' => $this->hideZero,
                 'amount' => $this->getAmount($row->{$this->getName()}),
             ])
             ->render();
