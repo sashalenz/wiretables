@@ -2,10 +2,7 @@
 
 namespace Sashalenz\Wiretables\Filters;
 
-use Illuminate\Contracts\View\View;
-use Sashalenz\Wireforms\Components\Fields\Select;
 use Spatie\QueryBuilder\AllowedFilter;
-use Spatie\QueryBuilder\Filters\FiltersTrashed;
 
 class TrashedFilter extends SelectFilter
 {
