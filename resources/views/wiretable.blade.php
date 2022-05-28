@@ -103,6 +103,7 @@
                 </thead>
             @endif
             <tbody class="bg-white leading-6 md:leading-5 text-gray-700 border-gray-200 border-x"
+                   wire:loading.class="opacity-50"
                    @if(method_exists($this, 'getUseSortProperty') && $this->useSort)
                        x-on:drop="
                             moving = false
