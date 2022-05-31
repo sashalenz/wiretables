@@ -1,4 +1,4 @@
-<div class="relative flex justify-end items-center -m-2">
+<div @class(["flex justify-end items-center"])>
     @foreach($buttons as $button)
         {!! $button->renderIt($row) !!}
     @endforeach

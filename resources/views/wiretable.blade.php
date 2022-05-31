@@ -138,7 +138,7 @@
                     @endif
                 >
                     @foreach($this->columns as $column)
-                        <td @class(['p-2 md:px-4 md:py-3 xl:py-4', $column->getClass($row)])
+                        <td @class(['p-2 md:py-3 xl:py-4', $column->getClass($row)])
                             wire:key="column-{{ $row->id }}-{{ $loop->index }}"
                         >
                             @if($column->canDisplay($row))

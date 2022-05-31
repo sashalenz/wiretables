@@ -4,6 +4,7 @@ namespace Sashalenz\Wiretables\Columns;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
+use Sashalenz\Wiretables\Contracts\ButtonContract;
 
 class ActionColumn extends Column
 {
@@ -25,7 +26,8 @@ class ActionColumn extends Column
                 'id' => $row->getKey(),
                 'name' => $this->getName(),
                 'row' => $row,
-                'buttons' => $this->buttons,
+                'buttons' => $this->buttons
+                    ->filter(fn (ButtonContract $button) => $button->canDisplay($row)),
             ])
             ->render();
     }

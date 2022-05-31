@@ -5,7 +5,6 @@ namespace Sashalenz\Wiretables\Buttons;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
-use JsonException;
 use RuntimeException;
 use Sashalenz\Wiretables\Contracts\ButtonContract;
 
@@ -115,7 +114,7 @@ abstract class Button extends Component implements ButtonContract
             ->implode(' ');
     }
 
-    protected function canDisplay($row = null): bool
+    public function canDisplay($row = null): bool
     {
         return is_callable($this->displayCondition)
             ? call_user_func($this->displayCondition, $row)
@@ -151,15 +150,8 @@ abstract class Button extends Component implements ButtonContract
         return new static($name);
     }
 
-    /**
-     * @throws JsonException
-     */
     public function renderIt($row = null): ?View
     {
-        if (! $this->canDisplay($row)) {
-            return null;
-        }
-
         if (! $this->getTitle() && ! $this->getIcon()) {
             throw new RuntimeException('Title or Icon must be presented');
         }

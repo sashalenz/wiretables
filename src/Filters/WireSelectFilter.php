@@ -67,9 +67,9 @@ class WireSelectFilter extends Filter
             orderDir: $this->orderDir,
             emitUp: 'addFilter'
         )
-            ->withAttributes(array_filter([
+            ->withAttributes([
                 "x-on:update-{$this->getKebabName()}.window" => "event => { \$el.querySelectorAll('div[wire\\\\:id]').forEach((el) => window.Livewire.find(el.getAttribute('wire:id')).emitSelf('fillParent', event.detail.value)) }",
-            ]))
+            ])
             ->render();
     }
 }
