@@ -4,6 +4,7 @@ namespace Sashalenz\Wiretables\Columns;
 
 use Closure;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\View\Component;
 use Sashalenz\Wireforms\Traits\Authorizable;
@@ -181,7 +182,7 @@ abstract class Column extends Component implements ColumnContract
             ?->with([
                 'id' => $row->getKey(),
                 'name' => $this->getName(),
-                'data' => $row->{$this->getName()},
+                'data' => $row->{$this->getName()}
             ])
             ->render();
     }

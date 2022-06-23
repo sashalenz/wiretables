@@ -3,6 +3,7 @@
 namespace Sashalenz\Wiretables\Columns;
 
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Arr;
 
 class HasManyColumn extends Column
 {
@@ -25,7 +26,7 @@ class HasManyColumn extends Column
 
     public function canDisplay($row): bool
     {
-        if (! $row->{$this->getName()}) {
+        if (! Arr::get($row->toArray(), $this->getName())) {
             return false;
         }
 

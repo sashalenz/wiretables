@@ -5,6 +5,7 @@ namespace Sashalenz\Wiretables;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 use Sashalenz\Searchable\Filters\SearchFilter;
@@ -124,7 +125,7 @@ abstract class Wiretable extends Component implements TableContract
 
     abstract public function getTitleProperty(): string;
 
-    abstract protected function query(): Builder;
+    abstract protected function query(): Builder|Relation;
 
     abstract protected function columns(): Collection;
 }
