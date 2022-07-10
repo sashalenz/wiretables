@@ -30,7 +30,7 @@ class FileDownloadColumn extends Column
             ?->with([
                 'id' => $row->getKey(),
                 'name' => $this->getName(),
-                'data' => $row->getMedia($this->collection)
+                'data' => $row->getMedia($this->collection),
             ])
             ->render();
     }
