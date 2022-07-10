@@ -7,6 +7,7 @@ use Illuminate\Contracts\View\View;
 class IdColumn extends Column
 {
     public bool $hasHighlight = true;
+    public array $class = ['pl-4'];
 
     public function getTitle(): ?string
     {
