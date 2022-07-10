@@ -8,13 +8,7 @@ use Illuminate\Contracts\View\View;
 class DateTimeColumn extends Column
 {
     public string $format = 'Y-m-d H:i';
-
-    public function __construct($name)
-    {
-        parent::__construct($name);
-
-        $this->class('whitespace-nowrap text-gray-500');
-    }
+    public array $class = ['whitespace-nowrap text-gray-500'];
 
     public function format(string $format): self
     {
